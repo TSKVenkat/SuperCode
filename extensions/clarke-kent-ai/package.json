@@ -1,15 +1,16 @@
 {
     "name": "clarke-kent-ai",
     "displayName": "Clarke Kent AI",
-    "description": "Superman's AI assistant for SuperCode - powered by OpenRouter",
+    "description": "Superman's AI assistant for SuperCode - powered by OpenRouter with FREE models",
     "version": "1.0.0",
     "publisher": "supercode",
     "engines": {
         "vscode": "^1.90.0"
     },
     "categories": [
-        "AI",
-        "Chat"
+        "Machine Learning",
+        "Programming Languages",
+        "Other"
     ],
     "activationEvents": [
         "onStartupFinished"
@@ -17,91 +18,83 @@
     "icon": "media/image.png",
     "main": "./out/extension.js",
     "contributes": {
-        "chatParticipants": [
-            {
-                "id": "clarkeKent",
-                "name": "clarke",
-                "fullName": "Clarke Kent",
-                "description": "Your Superman AI coding assistant",
-                "isDefault": true
-            }
-        ],
         "commands": [
             {
                 "command": "clarkeKent.setApiKey",
-                "title": "Clarke Kent: Set OpenRouter API Key"
+                "title": "Clarke Kent: Set OpenRouter API Key",
+                "icon": "$(key)"
             },
             {
                 "command": "clarkeKent.selectModel",
-                "title": "Clarke Kent: Select AI Model"
+                "title": "Clarke Kent: Select AI Model",
+                "icon": "$(hubot)"
             },
             {
-                "command": "clarkeKent.previewFile",
-                "title": "Clarke Kent: Preview Current File",
-                "icon": "$(open-preview)"
+                "command": "clarkeKent.chat",
+                "title": "Clarke Kent: Ask a Question",
+                "icon": "$(comment)"
             },
             {
-                "command": "clarkeKent.runFile",
-                "title": "Clarke Kent: Run Current File",
-                "icon": "$(play)"
+                "command": "clarkeKent.explainCode",
+                "title": "Clarke Kent: Explain Code",
+                "icon": "$(book)"
             },
             {
-                "command": "clarkeKent.stopExecution",
-                "title": "Clarke Kent: Stop Execution",
-                "icon": "$(debug-stop)"
-            },
-            {
-                "command": "clarkeKent.analyzeError",
-                "title": "Clarke Kent: Analyze Errors in Current File",
-                "icon": "$(bug)"
-            },
-            {
-                "command": "clarkeKent.generateProject",
-                "title": "Clarke Kent: Generate New Project",
-                "icon": "$(folder-library)"
+                "command": "clarkeKent.fixCode",
+                "title": "Clarke Kent: Fix Code",
+                "icon": "$(wrench)"
             }
         ],
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "clarkeKent.explainCode",
+                    "group": "clarkeKent",
+                    "when": "editorHasSelection"
+                },
+                {
+                    "command": "clarkeKent.fixCode",
+                    "group": "clarkeKent",
+                    "when": "editorHasSelection"
+                }
+            ]
+        },
         "keybindings": [
             {
-                "command": "clarkeKent.previewFile",
-                "key": "ctrl+shift+v",
-                "when": "editorTextFocus"
+                "command": "clarkeKent.chat",
+                "key": "ctrl+shift+k",
+                "mac": "cmd+shift+k"
             },
             {
-                "command": "clarkeKent.runFile",
-                "key": "f5",
-                "when": "editorTextFocus && !inDebugMode"
+                "command": "clarkeKent.explainCode",
+                "key": "ctrl+shift+e",
+                "mac": "cmd+shift+e",
+                "when": "editorTextFocus"
             }
         ],
         "configuration": {
             "title": "Clarke Kent AI",
             "properties": {
-                "clarkeKent.model": {
+                "clarkeKent.defaultModel": {
                     "type": "string",
-                    "default": "anthropic/claude-3.5-sonnet",
-                    "description": "The AI model to use for Clarke Kent",
+                    "default": "qwen/qwen-2.5-72b-instruct:free",
+                    "description": "Default AI model to use",
                     "enum": [
-                        "anthropic/claude-3.5-sonnet",
-                        "anthropic/claude-3-opus",
-                        "openai/gpt-4o",
-                        "openai/gpt-4-turbo",
-                        "google/gemini-pro-1.5",
-                        "meta-llama/llama-3.1-70b-instruct"
+                        "qwen/qwen-2.5-72b-instruct:free",
+                        "qwen/qwen-2.5-coder-32b-instruct:free",
+                        "deepseek/deepseek-r1:free",
+                        "deepseek/deepseek-chat:free",
+                        "nvidia/llama-3.1-nemotron-70b-instruct:free",
+                        "meta-llama/llama-3.3-70b-instruct:free"
+                    ],
+                    "enumDescriptions": [
+                        "Qwen 2.5 72B - Powerful open-source model",
+                        "Qwen 2.5 Coder 32B - Specialized for coding",
+                        "DeepSeek R1 - Reasoning-focused model",
+                        "DeepSeek Chat - General purpose AI",
+                        "Nemotron 70B - NVIDIA high quality",
+                        "Llama 3.3 70B - Latest Llama model"
                     ]
-                },
-                "clarkeKent.runConfigurations": {
-                    "type": "object",
-                    "default": {
-                        "python": "python3 ${file}",
-                        "javascript": "node ${file}",
-                        "typescript": "npx ts-node ${file}",
-                        "go": "go run ${file}",
-                        "rust": "cargo run",
-                        "java": "java ${fileBasenameNoExtension}",
-                        "c": "gcc ${file} -o ${fileBasenameNoExtension} && ./${fileBasenameNoExtension}",
-                        "cpp": "g++ ${file} -o ${fileBasenameNoExtension} && ./${fileBasenameNoExtension}"
-                    },
-                    "description": "Language-specific run commands. Use ${file}, ${fileBasename}, ${fileBasenameNoExtension}, ${fileDirname}"
                 }
             }
         }
@@ -109,9 +102,6 @@
     "scripts": {
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./"
-    },
-    "dependencies": {
-        "axios": "^1.6.0"
     },
     "devDependencies": {
         "@types/vscode": "^1.90.0",

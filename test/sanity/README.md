@@ -1,8 +1,8 @@
-# VS Code Release Sanity Check Tests
+# SuperCode Release Sanity Check Tests
 
 ## Overview
 
-Automated end-to-end release sanity tests for published VS Code builds.
+Automated end-to-end release sanity tests for published SuperCode builds.
 These tests verify critical functionality across different platforms and installation methods,
 ensuring that published builds meet quality standards before reaching end users.
 
@@ -10,7 +10,7 @@ See [Sanity Check wiki page](https://github.com/microsoft/vscode/wiki/Sanity-Che
 
 ## Usage
 
-Many tests will use the underlying platform to install and verify basic VS Code functionality.
+Many tests will use the underlying platform to install and verify basic SuperCode functionality.
 Such tests will need to be run on the corresponding target OS/virtual machine and will fail if ran outside.
 Use -g or -f command-line options to filter tests to match the host platform.
 
@@ -35,12 +35,12 @@ npm run sanity-test -- --commit 19228f26df517fecbfda96c20956f7c521e072be --quali
 
 ## References
 
-The following public documentation pages provide details on end-user VS Code setup scenarios.
+The following public documentation pages provide details on end-user SuperCode setup scenarios.
 
 - [Setup Overview](https://code.visualstudio.com/docs/setup/setup-overview)
 - [Linux Setup](https://code.visualstudio.com/docs/setup/linux)
 - [macOS Setup](https://code.visualstudio.com/docs/setup/mac)
 - [Windows Setup](https://code.visualstudio.com/docs/setup/windows)
 - [Portable Mode](https://code.visualstudio.com/docs/editor/portable)
-- [VS Code Server](https://code.visualstudio.com/docs/remote/vscode-server)
+- [SuperCode Server](https://code.visualstudio.com/docs/remote/vscode-server)
 - [Developing in WSL](https://code.visualstudio.com/docs/remote/wsl)

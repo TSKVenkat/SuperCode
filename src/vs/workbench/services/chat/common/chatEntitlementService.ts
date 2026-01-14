@@ -654,6 +654,11 @@ export class ChatEntitlementRequests extends Disposable {
 		this.pendingResolveCts.dispose(true);
 		const cts = this.pendingResolveCts = new CancellationTokenSource();
 
+		if (product.defaultChatAgent?.extensionId === 'supercode.clarke-kent-ai') {
+			this.update({ entitlement: ChatEntitlement.Pro });
+			return;
+		}
+
 		const session = await this.findMatchingProviderSession(cts.token);
 		if (cts.token.isCancellationRequested) {
 			return;

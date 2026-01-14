@@ -20,7 +20,7 @@
 
 ## About SuperCode
 
-**SuperCode** is a Superman-themed, AI-powered IDE built on VS Code. It combines the power of modern code editing with cutting-edge AI capabilities through **Clarke Kent**, your AI coding assistant powered by OpenRouter.
+**SuperCode** is a Superman-themed, AI-powered IDE built on SuperCode. It combines the power of modern code editing with cutting-edge AI capabilities through **Clarke Kent**, your AI coding assistant powered by OpenRouter.
 
 > *"With great power comes great code."* - Clarke Kent
 
@@ -43,8 +43,8 @@
 - **Agentic Planning**: Multi-step task planning with AI guidance
 - **Export & Deploy**: One-click deployment to Vercel, Netlify, and more
 
-### 💻 Built on VS Code
-- All the power of VS Code: IntelliSense, debugging, Git integration
+### 💻 Built on SuperCode
+- All the power of SuperCode: IntelliSense, debugging, Git integration
 - Thousands of extensions compatible
 - Cross-platform: Windows, macOS, Linux
 

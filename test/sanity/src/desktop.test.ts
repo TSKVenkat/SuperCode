@@ -188,7 +188,7 @@ export function setup(context: TestContext) {
 			];
 			args.push(test.workspaceDir);
 
-			context.log(`Starting VS Code ${entryPoint} with args ${args.join(' ')}`);
+			context.log(`Starting SuperCode ${entryPoint} with args ${args.join(' ')}`);
 			const app = await _electron.launch({ executablePath: entryPoint, args });
 			const window = await app.firstWindow();
 

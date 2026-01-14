@@ -101,12 +101,6 @@
 		"manageOverageUrl": "",
 		"upgradePlanUrl": "https://openrouter.ai/credits",
 		"signUpUrl": "https://openrouter.ai/auth",
-		"provider": {
-			"default": {
-				"id": "openrouter",
-				"name": "OpenRouter"
-			}
-		},
 		"providerUriSetting": "",
 		"providerScopes": [],
 		"entitlementUrl": "",
@@ -123,9 +117,11 @@
 		"completionsEnablementSetting": "",
 		"nextEditSuggestionsSetting": ""
 	},
-	"trustedExtensionAuthAccess": {
-		"openrouter": [
-			"supercode.clarke-kent-ai"
+	"extensionEnabledApiProposals": {
+		"supercode.clarke-kent-ai": [
+			"defaultChatParticipant",
+			"chatParticipantAdditions",
+			"chatParticipantPrivate"
 		]
 	}
 }

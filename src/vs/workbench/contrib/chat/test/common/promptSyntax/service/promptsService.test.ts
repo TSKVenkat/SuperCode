@@ -915,11 +915,11 @@ suite('PromptsService', () => {
 					path: `${rootFolder}/.github/agents/vscode-agent.agent.md`,
 					contents: [
 						'---',
-						'description: \'VS Code specialized agent.\'',
+						'description: \'SuperCode specialized agent.\'',
 						'target: \'vscode\'',
 						'model: \'gpt-4\'',
 						'---',
-						'I am specialized for VS Code editor tasks.',
+						'I am specialized for SuperCode editor tasks.',
 					]
 				},
 				{
@@ -954,11 +954,11 @@ suite('PromptsService', () => {
 				},
 				{
 					name: 'vscode-agent',
-					description: 'VS Code specialized agent.',
+					description: 'SuperCode specialized agent.',
 					target: 'vscode',
 					model: 'gpt-4',
 					agentInstructions: {
-						content: 'I am specialized for VS Code editor tasks.',
+						content: 'I am specialized for SuperCode editor tasks.',
 						toolReferences: [],
 						metadata: undefined
 					},
