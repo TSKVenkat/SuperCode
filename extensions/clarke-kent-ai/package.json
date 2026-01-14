@@ -1,0 +1,214 @@
+{
+    "name": "clarke-kent-ai",
+    "displayName": "Clarke Kent AI Assistant",
+    "description": "Your Superman-powered AI coding assistant with OpenRouter integration",
+    "version": "1.0.0",
+    "publisher": "supercode",
+    "license": "MIT",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "AI",
+        "Machine Learning",
+        "Programming Languages",
+        "Other"
+    ],
+    "keywords": [
+        "ai",
+        "copilot",
+        "coding assistant",
+        "openrouter",
+        "gpt",
+        "claude",
+        "superman",
+        "clarke kent"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "icon": "media/icon.png",
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "clarkeKent.openChat",
+                "title": "Clarke Kent: Open Chat",
+                "icon": {
+                    "light": "./media/icon-light.svg",
+                    "dark": "./media/icon-dark.svg"
+                }
+            },
+            {
+                "command": "clarkeKent.generateCode",
+                "title": "Clarke Kent: Generate Code from Prompt"
+            },
+            {
+                "command": "clarkeKent.refineSelection",
+                "title": "Clarke Kent: Refine Selection"
+            },
+            {
+                "command": "clarkeKent.explainCode",
+                "title": "Clarke Kent: Explain Code"
+            },
+            {
+                "command": "clarkeKent.analyzeError",
+                "title": "Clarke Kent: Analyze Error"
+            },
+            {
+                "command": "clarkeKent.generateProject",
+                "title": "Clarke Kent: Generate Full Project"
+            },
+            {
+                "command": "clarkeKent.setApiKey",
+                "title": "Clarke Kent: Set API Key"
+            },
+            {
+                "command": "clarkeKent.selectModel",
+                "title": "Clarke Kent: Select AI Model"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "clarke-kent",
+                    "title": "Clarke Kent AI",
+                    "icon": "./media/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "clarke-kent": [
+                {
+                    "type": "webview",
+                    "id": "clarkeKent.chatView",
+                    "name": "Chat"
+                }
+            ]
+        },
+        "configuration": {
+            "title": "Clarke Kent AI",
+            "properties": {
+                "clarkeKent.defaultModel": {
+                    "type": "string",
+                    "default": "anthropic/claude-3.5-sonnet",
+                    "description": "Default AI model to use for code generation",
+                    "enum": [
+                        "anthropic/claude-3.5-sonnet",
+                        "anthropic/claude-3-opus",
+                        "openai/gpt-4o",
+                        "openai/gpt-4-turbo",
+                        "openai/gpt-3.5-turbo",
+                        "google/gemini-pro",
+                        "meta-llama/llama-3.1-70b-instruct"
+                    ],
+                    "enumDescriptions": [
+                        "Claude 3.5 Sonnet - Best for complex reasoning and planning",
+                        "Claude 3 Opus - Most capable Claude model",
+                        "GPT-4o - Fast and capable",
+                        "GPT-4 Turbo - High capability with longer context",
+                        "GPT-3.5 Turbo - Fast and cost-effective",
+                        "Gemini Pro - Google's capable model",
+                        "Llama 3.1 70B - Open source powerhouse"
+                    ]
+                },
+                "clarkeKent.enableSmartRouting": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Automatically select the best model based on the task"
+                },
+                "clarkeKent.costTracking": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Track and display API usage costs"
+                },
+                "clarkeKent.streamResponses": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Stream AI responses in real-time"
+                },
+                "clarkeKent.maxTokens": {
+                    "type": "number",
+                    "default": 4096,
+                    "description": "Maximum tokens in AI response"
+                },
+                "clarkeKent.temperature": {
+                    "type": "number",
+                    "default": 0.7,
+                    "description": "AI creativity level (0.0 = focused, 1.0 = creative)"
+                }
+            }
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "clarkeKent.refineSelection",
+                    "when": "editorHasSelection",
+                    "group": "clarkeKent@1"
+                },
+                {
+                    "command": "clarkeKent.explainCode",
+                    "when": "editorHasSelection",
+                    "group": "clarkeKent@2"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "clarkeKent.openChat"
+                },
+                {
+                    "command": "clarkeKent.generateCode"
+                },
+                {
+                    "command": "clarkeKent.refineSelection",
+                    "when": "editorHasSelection"
+                },
+                {
+                    "command": "clarkeKent.analyzeError"
+                },
+                {
+                    "command": "clarkeKent.generateProject"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "clarkeKent.openChat",
+                "key": "ctrl+shift+k",
+                "mac": "cmd+shift+k"
+            },
+            {
+                "command": "clarkeKent.generateCode",
+                "key": "ctrl+shift+g",
+                "mac": "cmd+shift+g"
+            },
+            {
+                "command": "clarkeKent.refineSelection",
+                "key": "ctrl+shift+r",
+                "mac": "cmd+shift+r",
+                "when": "editorHasSelection"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.85.0",
+        "@types/node": "^20.10.0",
+        "typescript": "^5.3.0",
+        "@typescript-eslint/eslint-plugin": "^6.13.0",
+        "@typescript-eslint/parser": "^6.13.0",
+        "eslint": "^8.54.0"
+    },
+    "dependencies": {
+        "axios": "^1.6.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/supercode-ide/supercode.git"
+    }
+}

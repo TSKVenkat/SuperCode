@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- Superman S-Shield inspired icon for Clarke Kent AI -->
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CC0000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#990000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="sGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield shape (pentagon-like) -->
+  <path d="M12 2 L21 7 L21 14 L12 22 L3 14 L3 7 Z" 
+        fill="url(#shieldGrad)" 
+        stroke="#FFD700" 
+        stroke-width="0.5"/>
+  
+  <!-- Inner border -->
+  <path d="M12 3.5 L19.5 7.5 L19.5 13.5 L12 20.5 L4.5 13.5 L4.5 7.5 Z" 
+        fill="none" 
+        stroke="#FFD700" 
+        stroke-width="0.8"/>
+  
+  <!-- S letter -->
+  <path d="M9 8 Q9 6.5 12 6.5 Q15 6.5 15 8.5 Q15 10 12 10.5 Q9 11 9 13 Q9 15.5 12 15.5 Q15 15.5 15 14" 
+        fill="none" 
+        stroke="url(#sGrad)" 
+        stroke-width="2" 
+        stroke-linecap="round"/>
+</svg>
