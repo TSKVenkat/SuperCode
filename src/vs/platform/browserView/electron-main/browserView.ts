@@ -512,7 +512,7 @@ export class ThemePlugin extends Disposable {
 		// Apply theme when page loads
 		this._webContents.on('did-finish-load', () => this.applyTheme());
 
-		// Update theme when VS Code theme changes
+		// Update theme when SuperCode theme changes
 		this._register(this.themeMainService.onDidChangeColorScheme(() => {
 			this.applyBackgroundColor();
 			this.applyTheme();
@@ -539,7 +539,7 @@ export class ThemePlugin extends Disposable {
 
 			// Insert new theme CSS
 			this._injectedCSSKey = await this._webContents.insertCSS(`
-				/* VS Code theme override */
+				/* SuperCode theme override */
 				:root {
 					color-scheme: ${colorScheme};
 				}

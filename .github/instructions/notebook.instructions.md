@@ -1,11 +1,11 @@
 ---
 applyTo: '**/notebook/**'
-description: Architecture documentation for VS Code notebook and interactive window components
+description: Architecture documentation for SuperCode notebook and interactive window components
 ---
 
 # Notebook Architecture
 
-This document describes the internal architecture of VS Code's notebook implementation.
+This document describes the internal architecture of SuperCode's notebook implementation.
 
 ## Model resolution
 

@@ -1,13 +1,13 @@
-# VS Code Copilot Instructions
+# SuperCode Copilot Instructions
 
 ## Project Overview
 
-Visual Studio Code is built with a layered architecture using TypeScript, web APIs and Electron, combining web technologies with native app capabilities. The codebase is organized into key architectural layers:
+SuperCode is built with a layered architecture using TypeScript, web APIs and Electron, combining web technologies with native app capabilities. The codebase is organized into key architectural layers:
 
 ### Root Folders
 - `src/`: Main TypeScript source code with unit tests in `src/vs/*/test/` folders
 - `build/`: Build scripts and CI/CD tools
-- `extensions/`: Built-in extensions that ship with VS Code
+- `extensions/`: Built-in extensions that ship with SuperCode
 - `test/`: Integration tests and test infrastructure
 - `scripts/`: Development and build scripts
 - `resources/`: Static resources (icons, themes, etc.)
@@ -21,7 +21,7 @@ Visual Studio Code is built with a layered architecture using TypeScript, web AP
   - `workbench/browser/` - Core workbench UI components (parts, layout, actions)
   - `workbench/services/` - Service implementations
   - `workbench/contrib/` - Feature contributions (git, debug, search, terminal, etc.)
-  - `workbench/api/` - Extension host and VS Code API implementation
+  - `workbench/api/` - Extension host and SuperCode API implementation
 - `src/vs/code/` - Electron main process specific implementation
 - `src/vs/server/` - Server specific implementation
 
@@ -32,13 +32,13 @@ The core architecture follows these principles:
 - **Cross-platform compatibility** - Abstractions separate platform-specific code
 
 ### Built-in Extensions (`extensions/` folder)
-The `extensions/` directory contains first-party extensions that ship with VS Code:
+The `extensions/` directory contains first-party extensions that ship with SuperCode:
 - **Language support** - `typescript-language-features/`, `html-language-features/`, `css-language-features/`, etc.
 - **Core features** - `git/`, `debug-auto-launch/`, `emmet/`, `markdown-language-features/`
 - **Themes** - `theme-*` folders for default color themes
 - **Development tools** - `extension-editing/`, `vscode-api-tests/`
 
-Each extension follows the standard VS Code extension structure with `package.json`, TypeScript sources, and contribution points to extend the workbench through the Extension API.
+Each extension follows the standard SuperCode extension structure with `package.json`, TypeScript sources, and contribution points to extend the workbench through the Extension API.
 
 ### Finding Related Code
 1. **Semantic search first**: Use file search for general concepts
@@ -48,14 +48,14 @@ Each extension follows the standard VS Code extension structure with `package.js
 
 ## Validating TypeScript changes
 
-MANDATORY: Always check the `VS Code - Build` watch task output via #runTasks/getTaskOutput for compilation errors before running ANY script or declaring work complete, then fix all compilation errors before moving forward.
+MANDATORY: Always check the `SuperCode - Build` watch task output via #runTasks/getTaskOutput for compilation errors before running ANY script or declaring work complete, then fix all compilation errors before moving forward.
 
 - NEVER run tests if there are compilation errors
 - NEVER use `npm run compile` to compile TypeScript files but call #runTasks/getTaskOutput instead
 
 ### TypeScript compilation steps
-- Monitor the `VS Code - Build` task outputs for real-time compilation errors as you make changes
-- This task runs `Core - Build` and `Ext - Build` to incrementally compile VS Code TypeScript sources and built-in extensions
+- Monitor the `SuperCode - Build` task outputs for real-time compilation errors as you make changes
+- This task runs `Core - Build` and `Ext - Build` to incrementally compile SuperCode TypeScript sources and built-in extensions
 - Start the task if it's not already running in the background
 
 ### TypeScript validation steps

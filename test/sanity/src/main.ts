@@ -27,7 +27,7 @@ if (!options.quality) {
 
 const context = new TestContext(options.quality, options.commit, options.verbose, !options['signing-check']);
 
-describe('VS Code Sanity Tests', () => {
+describe('SuperCode Sanity Tests', () => {
 	beforeEach(function () {
 		context.currentTest = this.currentTest!;
 		const cwd = context.createTempDir();

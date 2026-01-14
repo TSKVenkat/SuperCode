@@ -1,10 +1,11 @@
 {
-  "name": "code-oss-dev",
-  "version": "1.109.0",
+  "name": "supercode",
+  "version": "1.91.0",
   "distro": "ce89ce05183635114ccfc46870d71ec520727c8e",
   "author": {
-    "name": "Microsoft Corporation"
+    "name": "SuperCode Team"
   },
+  "description": "SuperCode - AI-Powered IDE with Clarke Kent Assistant",
   "license": "MIT",
   "main": "./out/main.js",
   "type": "module",
@@ -212,6 +213,7 @@
     "source-map-support": "^0.3.2",
     "style-loader": "^3.3.2",
     "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
     "tsec": "0.2.7",
     "tslib": "^2.6.3",
     "typescript": "^6.0.0-dev.20251110",

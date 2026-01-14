@@ -172,7 +172,7 @@ async function generateUnifiedDiff(
 }
 
 /**
- * Computes unified diff hunks using VS Code's diff algorithm.
+ * Computes unified diff hunks using SuperCode's diff algorithm.
  * Merges adjacent/overlapping hunks to produce a valid patch.
  */
 function computeDiffHunks(originalLines: string[], modifiedLines: string[]): string[] {

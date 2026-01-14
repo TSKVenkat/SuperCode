@@ -3219,9 +3219,9 @@ export interface MainThreadTestingShape {
 	$updateController(controllerId: string, patch: ITestControllerPatch): void;
 	/** Diposes of the test controller with the given ID */
 	$unregisterTestController(controllerId: string): void;
-	/** Requests tests published to VS Code. */
+	/** Requests tests published to SuperCode. */
 	$subscribeToDiffs(): void;
-	/** Stops requesting tests published to VS Code. */
+	/** Stops requesting tests published to SuperCode. */
 	$unsubscribeFromDiffs(): void;
 	/** Publishes that new tests were available on the given source. */
 	$publishDiff(controllerId: string, diff: TestsDiffOp.Serialized[]): void;

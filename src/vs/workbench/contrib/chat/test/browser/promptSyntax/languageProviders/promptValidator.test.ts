@@ -400,7 +400,7 @@ suite('PromptValidator', () => {
 			assert.deepStrictEqual(
 				markers.map(m => ({ severity: m.severity, message: m.message })),
 				[
-					{ severity: MarkerSeverity.Warning, message: `Attribute 'applyTo' is not supported in VS Code agent files. Supported: argument-hint, description, handoffs, infer, model, name, target, tools.` },
+					{ severity: MarkerSeverity.Warning, message: `Attribute 'applyTo' is not supported in SuperCode agent files. Supported: argument-hint, description, handoffs, infer, model, name, target, tools.` },
 				]
 			);
 		});
@@ -552,7 +552,7 @@ suite('PromptValidator', () => {
 		test('vscode target agent validates normally', async () => {
 			const content = [
 				'---',
-				'description: "VS Code agent"',
+				'description: "SuperCode agent"',
 				'target: vscode',
 				'model: MAE 4.1',
 				`tools: ['tool1', 'tool2']`,
@@ -560,13 +560,13 @@ suite('PromptValidator', () => {
 				'Body with #tool1',
 			].join('\n');
 			const markers = await validate(content, PromptsType.agent);
-			assert.deepStrictEqual(markers, [], 'VS Code target should validate normally');
+			assert.deepStrictEqual(markers, [], 'SuperCode target should validate normally');
 		});
 
 		test('vscode target agent warns about unknown tools', async () => {
 			const content = [
 				'---',
-				'description: "VS Code agent"',
+				'description: "SuperCode agent"',
 				'target: vscode',
 				`tools: ['tool1', 'unknownTool']`,
 				'---',
@@ -581,7 +581,7 @@ suite('PromptValidator', () => {
 		test('vscode target agent with mcp-servers and github-tools', async () => {
 			const content = [
 				'---',
-				'description: "VS Code agent"',
+				'description: "SuperCode agent"',
 				'target: vscode',
 				`tools: ['tool1', 'edit']`,
 				`mcp-servers: {}`,
@@ -591,7 +591,7 @@ suite('PromptValidator', () => {
 			const markers = await validate(content, PromptsType.agent);
 			const messages = markers.map(m => m.message);
 			assert.deepStrictEqual(messages, [
-				'Attribute \'mcp-servers\' is ignored when running locally in VS Code.',
+				'Attribute \'mcp-servers\' is ignored when running locally in SuperCode.',
 				'Unknown tool \'edit\'.',
 			]);
 		});
@@ -599,7 +599,7 @@ suite('PromptValidator', () => {
 		test('undefined target with mcp-servers and github-tools', async () => {
 			const content = [
 				'---',
-				'description: "VS Code agent"',
+				'description: "SuperCode agent"',
 				`tools: ['tool1', 'shell']`,
 				`mcp-servers: {}`,
 				'---',
@@ -608,7 +608,7 @@ suite('PromptValidator', () => {
 			const markers = await validate(content, PromptsType.agent);
 			const messages = markers.map(m => m.message);
 			assert.deepStrictEqual(messages, [
-				'Attribute \'mcp-servers\' is ignored when running locally in VS Code.',
+				'Attribute \'mcp-servers\' is ignored when running locally in SuperCode.',
 			]);
 		});
 
@@ -723,7 +723,7 @@ suite('PromptValidator', () => {
 			{
 				const content = [
 					'---',
-					'description: "VS Code agent"',
+					'description: "SuperCode agent"',
 					'target: vscode',
 					`tools: ['tool1']`,
 					'---',

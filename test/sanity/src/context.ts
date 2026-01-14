@@ -26,7 +26,7 @@ interface ITargetMetadata {
 }
 
 /**
- * Provides context and utilities for VS Code sanity tests.
+ * Provides context and utilities for SuperCode sanity tests.
  */
 export class TestContext {
 	private static readonly authenticodeInclude = /^.+\.(exe|dll|sys|cab|cat|msi|jar|ocx|ps1|psm1|psd1|ps1xml|pssc1)$/i;
@@ -163,7 +163,7 @@ export class TestContext {
 	}
 
 	/**
-	 * Fetches metadata for a specific VS Code release target.
+	 * Fetches metadata for a specific SuperCode release target.
 	 * @param target The target platform (e.g., 'cli-linux-x64').
 	 * @returns The target metadata.
 	 */
@@ -183,7 +183,7 @@ export class TestContext {
 	}
 
 	/**
-	 * Downloads installer for specified VS Code release target.
+	 * Downloads installer for specified SuperCode release target.
 	 * @param target The target platform (e.g., 'cli-linux-x64').
 	 * @returns The path to the downloaded file.
 	 */
@@ -351,7 +351,7 @@ export class TestContext {
 	}
 
 	/**
-	 * Downloads and unpacks the specified VS Code release target.
+	 * Downloads and unpacks the specified SuperCode release target.
 	 * @param target The target platform (e.g., 'cli-linux-x64').
 	 * @returns The path to the unpacked directory.
 	 */
@@ -420,9 +420,9 @@ export class TestContext {
 	}
 
 	/**
-	 * Returns the Windows installation directory for VS Code based on the installation type and quality.
+	 * Returns the Windows installation directory for SuperCode based on the installation type and quality.
 	 * @param type The type of installation ('user' or 'system').
-	 * @returns The path to the VS Code installation directory.
+	 * @returns The path to the SuperCode installation directory.
 	 */
 	private getWindowsInstallDir(type: 'user' | 'system'): string {
 		let parentDir: string;
@@ -434,18 +434,18 @@ export class TestContext {
 
 		switch (this.quality) {
 			case 'stable':
-				return path.join(parentDir, 'Microsoft VS Code');
+				return path.join(parentDir, 'Microsoft SuperCode');
 			case 'insider':
-				return path.join(parentDir, 'Microsoft VS Code Insiders');
+				return path.join(parentDir, 'Microsoft SuperCode Insiders');
 			case 'exploration':
-				return path.join(parentDir, 'Microsoft VS Code Exploration');
+				return path.join(parentDir, 'Microsoft SuperCode Exploration');
 		}
 	}
 
 	/**
 	 * Installs a Microsoft Installer package silently.
 	 * @param installerPath The path to the installer executable.
-	 * @returns The path to the installed VS Code executable.
+	 * @returns The path to the installed SuperCode executable.
 	 */
 	public installWindowsApp(type: 'user' | 'system', installerPath: string): string {
 		this.log(`Installing ${installerPath} in silent mode`);
@@ -470,7 +470,7 @@ export class TestContext {
 			this.error(`Desktop entry point does not exist: ${entryPoint}`);
 		}
 
-		this.log(`Installed VS Code executable at: ${entryPoint}`);
+		this.log(`Installed SuperCode executable at: ${entryPoint}`);
 		return entryPoint;
 	}
 
@@ -485,9 +485,9 @@ export class TestContext {
 			this.error(`Uninstaller does not exist: ${uninstallerPath}`);
 		}
 
-		this.log(`Uninstalling VS Code from ${appDir} in silent mode`);
+		this.log(`Uninstalling SuperCode from ${appDir} in silent mode`);
 		this.runNoErrors(uninstallerPath, '/silent');
-		this.log(`Uninstalled VS Code from ${appDir} successfully`);
+		this.log(`Uninstalled SuperCode from ${appDir} successfully`);
 
 		await new Promise(resolve => setTimeout(resolve, 2000));
 		if (fs.existsSync(appDir)) {
@@ -498,19 +498,19 @@ export class TestContext {
 	/**
 	 * Prepares a macOS .app bundle for execution by removing the quarantine attribute.
 	 * @param bundleDir The directory containing the .app bundle.
-	 * @returns The path to the VS Code Electron executable.
+	 * @returns The path to the SuperCode Electron executable.
 	 */
 	public installMacApp(bundleDir: string): string {
 		let appName: string;
 		switch (this.quality) {
 			case 'stable':
-				appName = 'Visual Studio Code.app';
+				appName = 'SuperCode.app';
 				break;
 			case 'insider':
-				appName = 'Visual Studio Code - Insiders.app';
+				appName = 'SuperCode - Insiders.app';
 				break;
 			case 'exploration':
-				appName = 'Visual Studio Code - Exploration.app';
+				appName = 'SuperCode - Exploration.app';
 				break;
 		}
 
@@ -519,14 +519,14 @@ export class TestContext {
 			this.error(`Desktop entry point does not exist: ${entryPoint}`);
 		}
 
-		this.log(`VS Code executable at: ${entryPoint}`);
+		this.log(`SuperCode executable at: ${entryPoint}`);
 		return entryPoint;
 	}
 
 	/**
 	 * Installs a Linux RPM package.
 	 * @param packagePath The path to the RPM file.
-	 * @returns The path to the installed VS Code executable.
+	 * @returns The path to the installed SuperCode executable.
 	 */
 	public installRpm(packagePath: string): string {
 		this.log(`Installing ${packagePath} using RPM package manager`);
@@ -534,14 +534,14 @@ export class TestContext {
 		this.log(`Installed ${packagePath} successfully`);
 
 		const entryPoint = this.getEntryPoint('desktop', '/usr/bin');
-		this.log(`Installed VS Code executable at: ${entryPoint}`);
+		this.log(`Installed SuperCode executable at: ${entryPoint}`);
 		return entryPoint;
 	}
 
 	/**
 	 * Installs a Linux DEB package.
 	 * @param packagePath The path to the DEB file.
-	 * @returns The path to the installed VS Code executable.
+	 * @returns The path to the installed SuperCode executable.
 	 */
 	public installDeb(packagePath: string): string {
 		this.log(`Installing ${packagePath} using DEB package manager`);
@@ -549,14 +549,14 @@ export class TestContext {
 		this.log(`Installed ${packagePath} successfully`);
 
 		const entryPoint = this.getEntryPoint('desktop', '/usr/bin');
-		this.log(`Installed VS Code executable at: ${entryPoint}`);
+		this.log(`Installed SuperCode executable at: ${entryPoint}`);
 		return entryPoint;
 	}
 
 	/**
 	 * Installs a Linux Snap package.
 	 * @param packagePath The path to the Snap file.
-	 * @returns The path to the installed VS Code executable.
+	 * @returns The path to the installed SuperCode executable.
 	 */
 	public installSnap(packagePath: string): string {
 		this.log(`Installing ${packagePath} using Snap package manager`);
@@ -564,13 +564,13 @@ export class TestContext {
 		this.log(`Installed ${packagePath} successfully`);
 
 		const entryPoint = this.getEntryPoint('desktop', '/snap/bin');
-		this.log(`Installed VS Code executable at: ${entryPoint}`);
+		this.log(`Installed SuperCode executable at: ${entryPoint}`);
 		return entryPoint;
 	}
 
 	/**
-	 * Returns the entry point executable for the VS Code CLI or Desktop installation in the specified directory.
-	 * @param dir The directory of the VS Code installation.
+	 * Returns the entry point executable for the SuperCode CLI or Desktop installation in the specified directory.
+	 * @param dir The directory of the SuperCode installation.
 	 * @returns The path to the entry point executable.
 	 */
 	public getEntryPoint(type: 'cli' | 'desktop', dir: string): string {
@@ -597,8 +597,8 @@ export class TestContext {
 	}
 
 	/**
-	 * Creates a portable data directory in the specified unpacked VS Code directory.
-	 * @param dir The directory where VS Code was unpacked.
+	 * Creates a portable data directory in the specified unpacked SuperCode directory.
+	 * @param dir The directory where SuperCode was unpacked.
 	 * @returns The path to the created portable data directory.
 	 */
 	public createPortableDataDir(dir: string): string {
@@ -612,7 +612,7 @@ export class TestContext {
 	}
 
 	/**
-	 * Returns the entry point executable for the VS Code server in the specified directory.
+	 * Returns the entry point executable for the SuperCode server in the specified directory.
 	 * @param dir The directory containing unpacked server files.
 	 * @returns The path to the server entry point executable.
 	 */
@@ -648,8 +648,8 @@ export class TestContext {
 	}
 
 	/**
-	 * Returns the tunnel URL for the VS Code server including vscode-version parameter.
-	 * @param baseUrl The base URL for the VS Code server.
+	 * Returns the tunnel URL for the SuperCode server including vscode-version parameter.
+	 * @param baseUrl The base URL for the SuperCode server.
 	 * @returns The tunnel URL with vscode-version parameter.
 	 */
 	public getTunnelUrl(baseUrl: string): string {

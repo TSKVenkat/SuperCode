@@ -34,7 +34,7 @@ export default new class ApiVsCodeInComments implements eslint.Rule.RuleModule {
 					const re = /vs code/ig;
 					let match: RegExpExecArray | null;
 					while ((match = re.exec(comment.value))) {
-						// Allow using 'VS Code' in quotes
+						// Allow using 'SuperCode' in quotes
 						if (comment.value[match.index - 1] === `'` && comment.value[match.index + match[0].length] === `'`) {
 							continue;
 						}

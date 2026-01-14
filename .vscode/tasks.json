@@ -58,7 +58,7 @@
 			}
 		},
 		{
-			"label": "VS Code - Build",
+			"label": "SuperCode - Build",
 			"dependsOn": [
 				"Core - Build",
 				"Ext - Build"
@@ -94,7 +94,7 @@
 			"problemMatcher": "$tsc"
 		},
 		{
-			"label": "Kill VS Code - Build",
+			"label": "Kill SuperCode - Build",
 			"dependsOn": [
 				"Kill Core - Build",
 				"Kill Ext - Build"
@@ -103,21 +103,21 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Restart VS Code - Build",
+			"label": "Restart SuperCode - Build",
 			"dependsOn": [
-				"Kill VS Code - Build",
-				"VS Code - Build"
+				"Kill SuperCode - Build",
+				"SuperCode - Build"
 			],
 			"group": "build",
 			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
 		{
-			"label": "Kill VS Code - Build, Npm, VS Code - Build",
+			"label": "Kill SuperCode - Build, Npm, SuperCode - Build",
 			"dependsOn": [
-				"Kill VS Code - Build",
+				"Kill SuperCode - Build",
 				"npm: install",
-				"VS Code - Build"
+				"SuperCode - Build"
 			],
 			"group": "build",
 			"dependsOrder": "sequence",
