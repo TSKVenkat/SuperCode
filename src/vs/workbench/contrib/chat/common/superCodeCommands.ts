@@ -3,7 +3,7 @@
  *  Registers all SuperCode commands in the Command Palette
  *--------------------------------------------------------------------------------------------*/
 
-import { localize, localize2 } from '../../../../nls.js';
+import { localize2 } from '../../../../nls.js';
 import { Action2, registerAction2, MenuId } from '../../../../platform/actions/common/actions.js';
 import { ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
 import { IEditorService } from '../../../services/editor/common/editorService.js';

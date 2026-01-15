@@ -10,14 +10,14 @@ import { IWorkspaceContextService } from '../../../../platform/workspace/common/
 import { URI } from '../../../../base/common/uri.js';
 
 // Import all services
-import { TestGeneratorService, GeneratedTest, TestFramework } from '../supercode/testing/testGenerator.js';
-import { ModelFallbackService } from '../supercode/network/modelFallback.js';
-import { WebSearchService, WebSearchResult } from '../supercode/search/webSearchService.js';
-import { DependencyGraphService, DependencyGraph } from '../supercode/context/dependencyGraph.js';
-import { SecurityScannerService, SecurityReport } from '../supercode/security/securityScanner.js';
-import { AgenticPlannerService, ExecutionPlan } from '../supercode/agent/planner.js';
-import { UserMemoryService } from '../supercode/memory/userProfile.js';
-import { ProjectOnboardingService, OnboardingResult } from '../supercode/onboarding/projectScanner.js';
+import { TestGeneratorService, GeneratedTest, TestFramework } from '../../supercode/testing/testGenerator.js';
+import { ModelFallbackService } from '../../supercode/network/modelFallback.js';
+import { WebSearchService, WebSearchResult } from '../../supercode/search/webSearchService.js';
+import { DependencyGraphService } from '../../supercode/context/dependencyGraph.js';
+import { SecurityScannerService, SecurityReport } from '../../supercode/security/securityScanner.js';
+import { AgenticPlannerService, ExecutionPlan } from '../../supercode/agent/planner.js';
+import { UserMemoryService } from '../../supercode/memory/userProfile.js';
+import { ProjectOnboardingService, OnboardingResult } from '../../supercode/onboarding/projectScanner.js';
 
 // ============================================================================
 // UNIFIED SERVICES
