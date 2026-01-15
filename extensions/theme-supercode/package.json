@@ -27,6 +27,17 @@
             }
         ]
     },
+    "configurationDefaults": {
+        "workbench.colorTheme": "Krypton Dark",
+        "workbench.iconTheme": "vs-seti",
+        "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace",
+        "editor.fontSize": 14,
+        "editor.fontLigatures": true,
+        "editor.cursorBlinking": "smooth",
+        "editor.smoothScrolling": true,
+        "workbench.startupEditor": "welcomePage",
+        "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', monospace"
+    },
     "repository": {
         "type": "git",
         "url": "https://github.com/supercode-ide/supercode.git"
