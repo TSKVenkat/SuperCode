@@ -16,9 +16,12 @@ import * as task from './lib/task.ts';
 import * as util from './lib/util.ts';
 
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-const repoPath = path.dirname(import.meta.dirname);
+const repoPath = path.dirname(__dirname);
 const commit = getVersion(repoPath);
 const buildPath = (arch: string) => path.join(path.dirname(repoPath), `VSCode-win32-${arch}`);
 const setupDir = (arch: string, target: string) => path.join(repoPath, '.build', `win32-${arch}`, `${target}-setup`);
@@ -73,10 +76,10 @@ function buildWin32Setup(arch: string, target: string): task.CallbackTask {
 
 		const quality = (product as typeof product & { quality?: string }).quality || 'dev';
 		let versionedResourcesFolder = '';
-		let issPath = path.join(import.meta.dirname, 'win32', 'code.iss');
+		let issPath = path.join(__dirname, 'win32', 'code.iss');
 		if (quality && quality === 'insider') {
 			versionedResourcesFolder = commit!.substring(0, 10);
-			issPath = path.join(import.meta.dirname, 'win32', 'code-insider.iss');
+			issPath = path.join(__dirname, 'win32', 'code-insider.iss');
 		}
 		const originalProductJsonPath = path.join(sourcePath, versionedResourcesFolder, 'resources/app/product.json');
 		const productJsonPath = path.join(outputPath, 'product.json');

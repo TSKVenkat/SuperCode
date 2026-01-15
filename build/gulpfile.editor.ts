@@ -19,8 +19,11 @@ import * as fs from 'fs';
 import filter from 'gulp-filter';
 import { createReporter } from './lib/reporter.ts';
 import monacoPackage from './monaco/package.json' with { type: 'json' };
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(import.meta.dirname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(__dirname);
 const sha1 = getVersion(root);
 const semver = monacoPackage.version;
 const headerVersion = semver + '(' + sha1 + ')';
@@ -233,7 +236,7 @@ function createTscCompileTask(watch: boolean) {
 				args.push('-w');
 			}
 			const child = cp.spawn(`node`, args, {
-				cwd: path.join(import.meta.dirname, '..'),
+				cwd: path.join(__dirname, '..'),
 				// stdio: [null, 'pipe', 'inherit']
 			});
 			const errors: string[] = [];

@@ -4,21 +4,37 @@
  *--------------------------------------------------------------------------------------------*/
 
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { Readable } from 'stream';
+import { fileURLToPath } from 'url';
 import type { ReadableStream } from 'stream/web';
+import { fileURLToPath } from 'url';
 import { pipeline } from 'node:stream/promises';
+import { fileURLToPath } from 'url';
 import yauzl from 'yauzl';
+import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 import { retry } from './retry.ts';
+import { fileURLToPath } from 'url';
 import { CosmosClient } from '@azure/cosmos';
+import { fileURLToPath } from 'url';
 import cp from 'child_process';
+import { fileURLToPath } from 'url';
 import os from 'os';
+import { fileURLToPath } from 'url';
 import { Worker, isMainThread, workerData } from 'node:worker_threads';
+import { fileURLToPath } from 'url';
 import { ConfidentialClientApplication } from '@azure/msal-node';
+import { fileURLToPath } from 'url';
 import { BlobClient, BlobServiceClient, BlockBlobClient, ContainerClient, ContainerSASPermissions, generateBlobSASQueryParameters } from '@azure/storage-blob';
+import { fileURLToPath } from 'url';
 import jws from 'jws';
+import { fileURLToPath } from 'url';
 import { clearInterval, setInterval } from 'node:timers';
+import { fileURLToPath } from 'url';
 
 export function e(name: string): string {
 	const result = process.env[name];
@@ -1026,7 +1042,7 @@ async function main() {
 
 			processing.add(artifact.name);
 			const promise = new Promise<void>((resolve, reject) => {
-				const worker = new Worker(import.meta.filename, { workerData: { artifact, artifactFilePath } });
+				const worker = new Worker(__filename, { workerData: { artifact, artifactFilePath } });
 				worker.on('error', reject);
 				worker.on('exit', code => {
 					if (code === 0) {

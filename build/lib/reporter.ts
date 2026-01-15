@@ -8,6 +8,9 @@ import fancyLog from 'fancy-log';
 import ansiColors from 'ansi-colors';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class ErrorLog {
 	public id: string;
@@ -76,7 +79,7 @@ function getErrorLog(id: string = '') {
 	return errorLog;
 }
 
-const buildLogFolder = path.join(path.dirname(path.dirname(import.meta.dirname)), '.build');
+const buildLogFolder = path.join(path.dirname(path.dirname(__dirname)), '.build');
 
 try {
 	fs.mkdirSync(buildLogFolder);

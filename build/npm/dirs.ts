@@ -4,6 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { existsSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Complete list of directories where npm should be executed to install node modules
@@ -63,7 +67,7 @@ export const dirs = [
 	'.vscode/extensions/vscode-selfhost-test-provider',
 ];
 
-if (existsSync(`${import.meta.dirname}/../../.build/distro/npm`)) {
+if (existsSync(`${__dirname}/../../.build/distro/npm`)) {
 	dirs.push('.build/distro/npm');
 	dirs.push('.build/distro/npm/remote');
 	dirs.push('.build/distro/npm/remote/web');

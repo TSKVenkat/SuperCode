@@ -6,8 +6,11 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { fileURLToPath } from 'url';
 
-const productjson = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '../../../product.json'), 'utf8'));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const productjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../product.json'), 'utf8'));
 const shasum = crypto.createHash('sha256');
 
 for (const ext of productjson.builtInExtensions) {

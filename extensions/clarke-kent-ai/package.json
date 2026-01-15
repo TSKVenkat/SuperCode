@@ -1,8 +1,8 @@
 {
     "name": "clarke-kent-ai",
     "displayName": "Clarke Kent AI",
-    "description": "Superman's AI assistant for SuperCode - powered by OpenRouter with FREE models",
-    "version": "1.0.0",
+    "description": "Superman's AI assistant for SuperCode - powered by OpenRouter with FREE models. Features 9 slash commands and context-aware coding assistance.",
+    "version": "2.0.0",
     "publisher": "supercode",
     "engines": {
         "vscode": "^1.90.0"
@@ -12,6 +12,17 @@
         "Programming Languages",
         "Other"
     ],
+    "keywords": [
+        "ai",
+        "assistant",
+        "code",
+        "openrouter",
+        "llm",
+        "coding assistant",
+        "refactor",
+        "explain",
+        "test generation"
+    ],
     "activationEvents": [
         "onStartupFinished"
     ],
@@ -20,46 +31,142 @@
     "contributes": {
         "commands": [
             {
+                "command": "clarkeKent.openAgent",
+                "title": "Clarke Kent: Open Agent Panel",
+                "icon": "$(hubot)",
+                "category": "Clarke Kent"
+            },
+            {
                 "command": "clarkeKent.setApiKey",
                 "title": "Clarke Kent: Set OpenRouter API Key",
-                "icon": "$(key)"
+                "icon": "$(key)",
+                "category": "Clarke Kent"
             },
             {
                 "command": "clarkeKent.selectModel",
                 "title": "Clarke Kent: Select AI Model",
-                "icon": "$(hubot)"
+                "icon": "$(settings-gear)",
+                "category": "Clarke Kent"
             },
             {
                 "command": "clarkeKent.chat",
-                "title": "Clarke Kent: Ask a Question",
-                "icon": "$(comment)"
+                "title": "Clarke Kent: Quick Chat",
+                "icon": "$(comment)",
+                "category": "Clarke Kent"
             },
             {
                 "command": "clarkeKent.explainCode",
-                "title": "Clarke Kent: Explain Code",
-                "icon": "$(book)"
+                "title": "Clarke Kent: /explain - Explain Code",
+                "icon": "$(book)",
+                "category": "Clarke Kent"
             },
             {
                 "command": "clarkeKent.fixCode",
-                "title": "Clarke Kent: Fix Code",
-                "icon": "$(wrench)"
+                "title": "Clarke Kent: /fix - Fix Code",
+                "icon": "$(wrench)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.generateTests",
+                "title": "Clarke Kent: /test - Generate Tests",
+                "icon": "$(beaker)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.refactorCode",
+                "title": "Clarke Kent: /refactor - Refactor Code",
+                "icon": "$(edit)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.generateDocs",
+                "title": "Clarke Kent: /docs - Generate Documentation",
+                "icon": "$(file-text)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.reviewCode",
+                "title": "Clarke Kent: /review - Code Review",
+                "icon": "$(eye)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.securityScan",
+                "title": "Clarke Kent: /security - Security Scan",
+                "icon": "$(shield)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.optimizeCode",
+                "title": "Clarke Kent: /optimize - Optimize Code",
+                "icon": "$(zap)",
+                "category": "Clarke Kent"
+            },
+            {
+                "command": "clarkeKent.convertCode",
+                "title": "Clarke Kent: /convert - Convert to Another Language",
+                "icon": "$(arrow-swap)",
+                "category": "Clarke Kent"
             }
         ],
         "menus": {
             "editor/context": [
                 {
+                    "submenu": "clarkeKent.submenu",
+                    "group": "clarkeKent"
+                }
+            ],
+            "clarkeKent.submenu": [
+                {
                     "command": "clarkeKent.explainCode",
-                    "group": "clarkeKent",
-                    "when": "editorHasSelection"
+                    "group": "1_analyze"
                 },
                 {
                     "command": "clarkeKent.fixCode",
-                    "group": "clarkeKent",
-                    "when": "editorHasSelection"
+                    "group": "1_analyze"
+                },
+                {
+                    "command": "clarkeKent.reviewCode",
+                    "group": "1_analyze"
+                },
+                {
+                    "command": "clarkeKent.generateTests",
+                    "group": "2_generate"
+                },
+                {
+                    "command": "clarkeKent.generateDocs",
+                    "group": "2_generate"
+                },
+                {
+                    "command": "clarkeKent.refactorCode",
+                    "group": "3_transform"
+                },
+                {
+                    "command": "clarkeKent.optimizeCode",
+                    "group": "3_transform"
+                },
+                {
+                    "command": "clarkeKent.convertCode",
+                    "group": "3_transform"
+                },
+                {
+                    "command": "clarkeKent.securityScan",
+                    "group": "4_security"
                 }
             ]
         },
+        "submenus": [
+            {
+                "id": "clarkeKent.submenu",
+                "label": "🦸 Clarke Kent"
+            }
+        ],
         "keybindings": [
+            {
+                "command": "clarkeKent.openAgent",
+                "key": "ctrl+shift+a",
+                "mac": "cmd+shift+a"
+            },
             {
                 "command": "clarkeKent.chat",
                 "key": "ctrl+shift+k",
@@ -70,6 +177,18 @@
                 "key": "ctrl+shift+e",
                 "mac": "cmd+shift+e",
                 "when": "editorTextFocus"
+            },
+            {
+                "command": "clarkeKent.fixCode",
+                "key": "ctrl+shift+f",
+                "mac": "cmd+shift+f",
+                "when": "editorTextFocus && editorHasSelection"
+            },
+            {
+                "command": "clarkeKent.generateTests",
+                "key": "ctrl+shift+t",
+                "mac": "cmd+shift+t",
+                "when": "editorTextFocus"
             }
         ],
         "configuration": {
@@ -77,7 +196,7 @@
             "properties": {
                 "clarkeKent.defaultModel": {
                     "type": "string",
-                    "default": "qwen/qwen-2.5-72b-instruct:free",
+                    "default": "qwen/qwen-2.5-coder-32b-instruct:free",
                     "description": "Default AI model to use",
                     "enum": [
                         "qwen/qwen-2.5-72b-instruct:free",
@@ -89,19 +208,30 @@
                     ],
                     "enumDescriptions": [
                         "Qwen 2.5 72B - Powerful open-source model",
-                        "Qwen 2.5 Coder 32B - Specialized for coding",
+                        "Qwen 2.5 Coder 32B - Specialized for coding (recommended)",
                         "DeepSeek R1 - Reasoning-focused model",
                         "DeepSeek Chat - General purpose AI",
                         "Nemotron 70B - NVIDIA high quality",
                         "Llama 3.3 70B - Latest Llama model"
                     ]
+                },
+                "clarkeKent.autoApplyFixes": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Automatically apply code changes without confirmation"
+                },
+                "clarkeKent.showFollowUpSuggestions": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show follow-up command suggestions after each response"
                 }
             }
         }
     },
     "scripts": {
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./"
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts"
     },
     "devDependencies": {
         "@types/vscode": "^1.90.0",

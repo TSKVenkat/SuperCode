@@ -4,11 +4,17 @@
  *--------------------------------------------------------------------------------------------*/
 
 import esbuild from 'esbuild';
+import { fileURLToPath } from 'url';
 import ts from 'typescript';
+import { fileURLToPath } from 'url';
 import threads from 'node:worker_threads';
+import { fileURLToPath } from 'url';
 import Vinyl from 'vinyl';
+import { fileURLToPath } from 'url';
 import { cpus } from 'node:os';
+import { fileURLToPath } from 'url';
 import { getTargetStringFromTsConfig } from '../tsconfigUtils.ts';
+import { fileURLToPath } from 'url';
 
 interface TranspileReq {
 	readonly tsSrcs: string[];
@@ -97,7 +103,7 @@ class TranspileWorker {
 
 	readonly id = TranspileWorker.pool++;
 
-	private _worker = new threads.Worker(import.meta.filename);
+	private _worker = new threads.Worker(__filename);
 	private _pending?: [resolve: Function, reject: Function, file: Vinyl[], options: ts.TranspileOptions, t1: number];
 	private _durations: number[] = [];
 

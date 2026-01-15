@@ -21,8 +21,11 @@ import { compileBuildWithManglingTask } from './gulpfile.compile.ts';
 import * as extensions from './lib/extensions.ts';
 import jsonEditor from 'gulp-json-editor';
 import buildfile from './buildfile.ts';
+import { fileURLToPath } from 'url';
 
-const REPO_ROOT = path.dirname(import.meta.dirname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const REPO_ROOT = path.dirname(__dirname);
 const BUILD_ROOT = path.dirname(REPO_ROOT);
 const WEB_FOLDER = path.join(REPO_ROOT, 'remote', 'web');
 
@@ -155,7 +158,7 @@ function packageTask(sourceFolderName: string, destinationFolderName: string) {
 
 		const deps = gulp.src(dependenciesSrc, { base: 'remote/web', dot: true })
 			.pipe(filter(['**', '!**/package-lock.json']))
-			.pipe(util.cleanNodeModules(path.join(import.meta.dirname, '.webignore')));
+			.pipe(util.cleanNodeModules(path.join(__dirname, '.webignore')));
 
 		const favicon = gulp.src('resources/server/favicon.ico', { base: 'resources/server' });
 		const manifest = gulp.src('resources/server/manifest.json', { base: 'resources/server' });

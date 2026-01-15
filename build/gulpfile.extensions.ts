@@ -22,8 +22,11 @@ import plumber from 'gulp-plumber';
 import * as ext from './lib/extensions.ts';
 import * as tsb from './lib/tsb/index.ts';
 import sourcemaps from 'gulp-sourcemaps';
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(import.meta.dirname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(__dirname);
 const commit = getVersion(root);
 
 // To save 250ms for each gulp startup, we are caching the result here

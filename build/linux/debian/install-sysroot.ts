@@ -10,11 +10,14 @@ import https from 'https';
 import path from 'path';
 import { createHash } from 'crypto';
 import type { DebianArchString } from './types.ts';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Based on https://source.chromium.org/chromium/chromium/src/+/main:build/linux/sysroot_scripts/install-sysroot.py.
 const URL_PREFIX = 'https://msftelectronbuild.z5.web.core.windows.net';
 const URL_PATH = 'sysroots/toolchain';
-const REPO_ROOT = path.dirname(path.dirname(path.dirname(import.meta.dirname)));
+const REPO_ROOT = path.dirname(path.dirname(path.dirname(__dirname)));
 
 const ghApiHeaders: Record<string, string> = {
 	Accept: 'application/vnd.github.v3+json',

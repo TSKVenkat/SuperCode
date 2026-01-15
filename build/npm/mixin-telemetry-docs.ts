@@ -5,8 +5,12 @@
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { existsSync, rmSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const rootPath = resolve(import.meta.dirname, '..', '..');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const rootPath = resolve(__dirname, '..', '..');
 const telemetryDocsPath = join(rootPath, 'vscode-telemetry-docs');
 const repoUrl = 'https://github.com/microsoft/vscode-telemetry-docs';
 

@@ -17,9 +17,12 @@ import { debounce } from './lib/util.ts';
 import { createReporter } from './lib/reporter.ts';
 import untar from 'gulp-untar';
 import gunzip from 'gulp-gunzip';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const root = 'cli';
-const rootAbs = path.resolve(import.meta.dirname, '..', root);
+const rootAbs = path.resolve(__dirname, '..', root);
 const src = `${root}/src`;
 
 const platformOpensslDirName =

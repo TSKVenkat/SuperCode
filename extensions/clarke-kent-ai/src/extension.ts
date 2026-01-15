@@ -4,6 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { AgentChatPanel } from './features/agentChat';
+import { ContextProvider } from './features/contextProvider';
+import { EditorIntegration } from './features/editorIntegration';
+import { SLASH_COMMANDS, getModelForCommand, extractSuggestions } from './features/slashCommands';
 
 // Free models on OpenRouter
 const FREE_MODELS = [
@@ -16,16 +20,20 @@ const FREE_MODELS = [
 ];
 
 let apiKey: string | undefined;
-let currentModel = FREE_MODELS[0].id;
+let currentModel: string;
 
 export async function activate(context: vscode.ExtensionContext) {
     console.log('Clarke Kent AI: Initializing...');
 
-    // Load saved API key
+    // Load saved API key and model
     apiKey = await context.secrets.get('openrouter.apiKey');
     currentModel = context.globalState.get('selectedModel', FREE_MODELS[0].id);
 
-    // Register Set API Key command
+    // ========================
+    // Core Commands
+    // ========================
+
+    // Set API Key
     context.subscriptions.push(
         vscode.commands.registerCommand('clarkeKent.setApiKey', async () => {
             const key = await vscode.window.showInputBox({
@@ -42,7 +50,7 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register Select Model command
+    // Select Model
     context.subscriptions.push(
         vscode.commands.registerCommand('clarkeKent.selectModel', async () => {
             const items = FREE_MODELS.map(m => ({
@@ -65,7 +73,18 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register Chat with Clarke command
+    // ========================
+    // Agent Chat Panel (NEW)
+    // ========================
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.openAgent', () => {
+            AgentChatPanel.createOrShow(context);
+        })
+    );
+
+    // ========================
+    // Quick Chat (existing)
+    // ========================
     context.subscriptions.push(
         vscode.commands.registerCommand('clarkeKent.chat', async () => {
             if (!apiKey) {
@@ -94,8 +113,6 @@ export async function activate(context: vscode.ExtensionContext) {
             }, async (progress, token) => {
                 try {
                     const response = await sendMessage(input, token);
-
-                    // Show response in a new document
                     const doc = await vscode.workspace.openTextDocument({
                         content: `# Clarke Kent's Response\n\n${response}`,
                         language: 'markdown'
@@ -110,136 +127,204 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    // Register Explain Code command
+    // ========================
+    // Slash Commands (individual commands for menu/keybindings)
+    // ========================
+
+    // /explain
     context.subscriptions.push(
         vscode.commands.registerCommand('clarkeKent.explainCode', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showWarningMessage('No active editor');
-                return;
-            }
-
-            const selection = editor.selection;
-            const code = selection.isEmpty
-                ? editor.document.getText()
-                : editor.document.getText(selection);
-
-            if (!code.trim()) {
-                vscode.window.showWarningMessage('No code to explain');
-                return;
-            }
-
-            if (!apiKey) {
-                vscode.window.showWarningMessage('Set your OpenRouter API key first');
-                return;
-            }
-
-            await vscode.window.withProgress({
-                location: vscode.ProgressLocation.Notification,
-                title: '🦸 Clarke Kent is analyzing...',
-                cancellable: true
-            }, async (progress, token) => {
-                try {
-                    const prompt = `Explain this code clearly and concisely:\n\n\`\`\`\n${code}\n\`\`\``;
-                    const response = await sendMessage(prompt, token);
-
-                    const doc = await vscode.workspace.openTextDocument({
-                        content: `# Code Explanation by Clarke Kent\n\n${response}`,
-                        language: 'markdown'
-                    });
-                    await vscode.window.showTextDocument(doc, { preview: true, viewColumn: vscode.ViewColumn.Beside });
-                } catch (error: any) {
-                    if (!token.isCancellationRequested) {
-                        vscode.window.showErrorMessage(`Error: ${error.message}`);
-                    }
-                }
-            });
+            await executeSlashCommand('/explain');
         })
     );
 
-    // Register Fix Code command
+    // /fix
     context.subscriptions.push(
         vscode.commands.registerCommand('clarkeKent.fixCode', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showWarningMessage('No active editor');
-                return;
-            }
-
-            const selection = editor.selection;
-            const code = selection.isEmpty
-                ? editor.document.getText()
-                : editor.document.getText(selection);
-
-            if (!code.trim()) {
-                vscode.window.showWarningMessage('No code to fix');
-                return;
-            }
-
-            if (!apiKey) {
-                vscode.window.showWarningMessage('Set your OpenRouter API key first');
-                return;
-            }
-
-            await vscode.window.withProgress({
-                location: vscode.ProgressLocation.Notification,
-                title: '🦸 Clarke Kent is fixing...',
-                cancellable: true
-            }, async (progress, token) => {
-                try {
-                    const prompt = `Fix any bugs or issues in this code. Return ONLY the fixed code without explanation:\n\n\`\`\`\n${code}\n\`\`\``;
-                    const response = await sendMessage(prompt, token);
-
-                    // Extract code from response
-                    const codeMatch = response.match(/```[\w]*\n([\s\S]*?)```/) ||
-                        response.match(/```([\s\S]*?)```/);
-                    const fixedCode = codeMatch ? codeMatch[1].trim() : response.trim();
-
-                    // Apply the fix
-                    await editor.edit(editBuilder => {
-                        if (selection.isEmpty) {
-                            const fullRange = new vscode.Range(
-                                editor.document.positionAt(0),
-                                editor.document.positionAt(editor.document.getText().length)
-                            );
-                            editBuilder.replace(fullRange, fixedCode);
-                        } else {
-                            editBuilder.replace(selection, fixedCode);
-                        }
-                    });
-
-                    vscode.window.showInformationMessage('✅ Code fixed by Clarke Kent!');
-                } catch (error: any) {
-                    if (!token.isCancellationRequested) {
-                        vscode.window.showErrorMessage(`Error: ${error.message}`);
-                    }
-                }
-            });
+            await executeSlashCommand('/fix');
         })
     );
+
+    // /test
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.generateTests', async () => {
+            await executeSlashCommand('/test');
+        })
+    );
+
+    // /refactor
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.refactorCode', async () => {
+            await executeSlashCommand('/refactor');
+        })
+    );
+
+    // /docs
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.generateDocs', async () => {
+            await executeSlashCommand('/docs');
+        })
+    );
+
+    // /review
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.reviewCode', async () => {
+            await executeSlashCommand('/review');
+        })
+    );
+
+    // /security
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.securityScan', async () => {
+            await executeSlashCommand('/security');
+        })
+    );
+
+    // /optimize
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.optimizeCode', async () => {
+            await executeSlashCommand('/optimize');
+        })
+    );
+
+    // /convert
+    context.subscriptions.push(
+        vscode.commands.registerCommand('clarkeKent.convertCode', async () => {
+            const targetLang = await vscode.window.showInputBox({
+                prompt: 'Convert to which language?',
+                placeHolder: 'e.g., Python, TypeScript, Go, Rust...'
+            });
+            if (targetLang) {
+                await executeSlashCommand('/convert', targetLang);
+            }
+        })
+    );
+
+    // ========================
+    // Helper Functions
+    // ========================
+
+    async function executeSlashCommand(command: string, args: string = ''): Promise<void> {
+        if (!apiKey) {
+            vscode.window.showWarningMessage('Set your OpenRouter API key first');
+            return;
+        }
+
+        const editorContext = await ContextProvider.getEditorContext();
+        if (!editorContext || !editorContext.code.trim()) {
+            vscode.window.showWarningMessage('Select some code first');
+            return;
+        }
+
+        const commandHandler = SLASH_COMMANDS[command];
+        if (!commandHandler) {
+            vscode.window.showErrorMessage(`Unknown command: ${command}`);
+            return;
+        }
+
+        await vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `🦸 Clarke Kent: ${commandHandler.name}...`,
+            cancellable: true
+        }, async (progress, token) => {
+            try {
+                const result = await commandHandler.handler(args, editorContext);
+                const model = getModelForCommand(command);
+
+                const response = await sendMessageWithModel(result.content, model, token);
+
+                // Handle action
+                if (result.action === 'replace' || result.action === 'newFile') {
+                    const choice = await vscode.window.showInformationMessage(
+                        'Apply changes?',
+                        'Apply',
+                        'View Only',
+                        'Cancel'
+                    );
+
+                    if (choice === 'Apply') {
+                        await EditorIntegration.applyAction(
+                            result.action,
+                            response,
+                            { language: editorContext.language, command }
+                        );
+                    } else if (choice === 'View Only') {
+                        await EditorIntegration.displayResponse(response, commandHandler.name);
+                    }
+                } else {
+                    await EditorIntegration.displayResponse(response, commandHandler.name);
+                }
+
+                // Show follow-up suggestions
+                const suggestions = extractSuggestions(response);
+                if (suggestions.length > 0) {
+                    const next = await vscode.window.showInformationMessage(
+                        'What next?',
+                        ...suggestions.map(s => s.replace('/', ''))
+                    );
+                    if (next) {
+                        await executeSlashCommand(`/${next}`);
+                    }
+                }
+
+            } catch (error: any) {
+                if (!token.isCancellationRequested) {
+                    vscode.window.showErrorMessage(`Error: ${error.message}`);
+                }
+            }
+        });
+    }
 
     // Show activation message
     if (apiKey) {
-        vscode.window.showInformationMessage(`🦸 Clarke Kent AI is ready! Using ${FREE_MODELS.find(m => m.id === currentModel)?.name || 'AI'}`);
+        vscode.window.showInformationMessage(
+            `🦸 Clarke Kent AI is ready! Using ${FREE_MODELS.find(m => m.id === currentModel)?.name || 'AI'}`,
+            'Open Agent Panel'
+        ).then(selection => {
+            if (selection === 'Open Agent Panel') {
+                vscode.commands.executeCommand('clarkeKent.openAgent');
+            }
+        });
     } else {
-        vscode.window.showInformationMessage('🦸 Clarke Kent AI is ready! Set your OpenRouter API key to start.', 'Set API Key')
-            .then(selection => {
-                if (selection) {
-                    vscode.commands.executeCommand('clarkeKent.setApiKey');
-                }
-            });
+        vscode.window.showInformationMessage(
+            '🦸 Clarke Kent AI is ready! Set your OpenRouter API key to start.',
+            'Set API Key',
+            'Open Agent'
+        ).then(selection => {
+            if (selection === 'Set API Key') {
+                vscode.commands.executeCommand('clarkeKent.setApiKey');
+            } else if (selection === 'Open Agent') {
+                vscode.commands.executeCommand('clarkeKent.openAgent');
+            }
+        });
     }
 
-    console.log('Clarke Kent AI: Activated successfully!');
+    console.log('Clarke Kent AI: Activated successfully with 9 slash commands!');
 }
 
 async function sendMessage(prompt: string, token: vscode.CancellationToken): Promise<string> {
+    return sendMessageWithModel(prompt, currentModel, token);
+}
+
+async function sendMessageWithModel(prompt: string, model: string, token: vscode.CancellationToken): Promise<string> {
     if (!apiKey) {
         throw new Error('OpenRouter API key not set');
     }
 
     const controller = new AbortController();
     token.onCancellationRequested(() => controller.abort());
+
+    const systemPrompt = `You are Clarke Kent, a brilliant AI coding assistant for SuperCode IDE. You are:
+- Helpful, knowledgeable, and super-powered (like a certain Kryptonian)
+- Concise but thorough in explanations
+- Always ready to save developers from bugs and bad code
+
+When providing code, always wrap it in markdown code blocks with the language specified.
+
+IMPORTANT: At the end of your response, include:
+**Suggestions:** /cmd1, /cmd2, /cmd3
+
+where the commands are relevant follow-up actions from: explain, fix, test, refactor, docs, review, security, optimize, convert`;
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -250,16 +335,10 @@ async function sendMessage(prompt: string, token: vscode.CancellationToken): Pro
             'X-Title': 'SuperCode IDE - Clarke Kent AI'
         },
         body: JSON.stringify({
-            model: currentModel,
+            model: model,
             messages: [
-                {
-                    role: 'system',
-                    content: 'You are Clarke Kent, a brilliant AI coding assistant for SuperCode IDE. You are helpful, knowledgeable, and always ready to assist with programming tasks. Be concise but thorough in your explanations.'
-                },
-                {
-                    role: 'user',
-                    content: prompt
-                }
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: prompt }
             ]
         }),
         signal: controller.signal

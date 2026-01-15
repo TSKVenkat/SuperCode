@@ -12,8 +12,11 @@ import { config } from './lib/electron.ts';
 import filter from 'gulp-filter';
 import * as deps from './lib/dependencies.ts';
 import { existsSync, readdirSync } from 'fs';
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(import.meta.dirname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(__dirname);
 
 const BUILD_TARGETS = [
 	{ platform: 'win32', arch: 'x64' },

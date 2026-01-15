@@ -7,8 +7,11 @@ import path from 'path';
 import fs from 'fs';
 import minimatch from 'minimatch';
 import { makeUniversalApp } from 'vscode-universal-bundler';
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(path.dirname(import.meta.dirname));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(path.dirname(__dirname));
 
 async function main(buildDir?: string) {
 	const arch = process.env['VSCODE_ARCH'];

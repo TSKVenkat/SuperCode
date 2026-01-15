@@ -7,6 +7,10 @@ import ts from 'typescript';
 import { readFileSync, existsSync } from 'fs';
 import { resolve, dirname, join } from 'path';
 import minimatch from 'minimatch';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 //
 // #############################################################################################
@@ -88,7 +92,7 @@ const RULES: IRule[] = [
 	}
 ];
 
-const TS_CONFIG_PATH = join(import.meta.dirname, '../../', 'src', 'tsconfig.json');
+const TS_CONFIG_PATH = join(__dirname, '../../', 'src', 'tsconfig.json');
 
 interface IRule {
 	target: string;

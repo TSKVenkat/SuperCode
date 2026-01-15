@@ -8,10 +8,12 @@ import fs from 'fs';
 import path from 'path';
 import { type Mapping, SourceMapGenerator } from 'source-map';
 import ts from 'typescript';
-import { pathToFileURL } from 'url';
+import * as url from 'url';
 import workerpool from 'workerpool';
 import { StaticLanguageServiceHost } from './staticLanguageServiceHost.ts';
 import * as buildfile from '../../buildfile.ts';
+
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 class ShortIdent {
 
@@ -429,7 +431,7 @@ export class Mangler {
 		this.log = log;
 		this.config = config;
 
-		this.renameWorkerPool = workerpool.pool(path.join(import.meta.dirname, 'renameWorker.ts'), {
+		this.renameWorkerPool = workerpool.pool(path.join(__dirname, 'renameWorker.ts'), {
 			maxWorkers: 4,
 			minWorkers: 'max'
 		});
@@ -667,7 +669,7 @@ export class Mangler {
 
 			const { mapRoot, sourceRoot } = service.getProgram()!.getCompilerOptions();
 			const projectDir = path.dirname(this.projectPath);
-			const sourceMapRoot = mapRoot ?? pathToFileURL(sourceRoot ?? projectDir).toString();
+			const sourceMapRoot = mapRoot ?? url.pathToFileURL(sourceRoot ?? projectDir).toString();
 
 			// source maps
 			let generator: SourceMapGenerator | undefined;
@@ -772,7 +774,7 @@ function normalize(path: string): string {
 }
 
 async function _run() {
-	const root = path.join(import.meta.dirname, '..', '..', '..');
+	const root = path.join(__dirname, '..', '..', '..');
 	const projectBase = path.join(root, 'src');
 	const projectPath = path.join(projectBase, 'tsconfig.json');
 	const newProjectBase = path.join(path.dirname(projectBase), path.basename(projectBase) + '2');
@@ -793,6 +795,7 @@ async function _run() {
 	}
 }
 
-if (import.meta.main) {
+// Node.js equivalent of import.meta.main
+if (import.meta.url === url.pathToFileURL(process.argv[1]).href) {
 	_run();
 }

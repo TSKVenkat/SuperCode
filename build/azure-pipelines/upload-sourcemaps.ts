@@ -12,8 +12,11 @@ import { getProductionDependencies } from '../lib/dependencies.ts';
 import { ClientAssertionCredential } from '@azure/identity';
 import Stream from 'stream';
 import azure from 'gulp-azure-storage';
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(path.dirname(import.meta.dirname));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(path.dirname(__dirname));
 const commit = process.env['BUILD_SOURCEVERSION'];
 const credential = new ClientAssertionCredential(process.env['AZURE_TENANT_ID']!, process.env['AZURE_CLIENT_ID']!, () => Promise.resolve(process.env['AZURE_ID_TOKEN']!));
 

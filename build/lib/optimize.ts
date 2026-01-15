@@ -18,6 +18,9 @@ import ansiColors from 'ansi-colors';
 import { getTargetStringFromTsConfig } from './tsconfigUtils.ts';
 import svgmin from 'gulp-svgmin';
 import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const require = createRequire(import.meta.url);
 
@@ -32,7 +35,7 @@ declare module 'gulp-sourcemaps' {
 	}
 }
 
-const REPO_ROOT_PATH = path.join(import.meta.dirname, '../..');
+const REPO_ROOT_PATH = path.join(__dirname, '../..');
 
 export interface IBundleESMTaskOpts {
 	/**
