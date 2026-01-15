@@ -250,6 +250,53 @@ function createCopilotSetupStep(id: string, button: string, when: string, includ
 
 export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
+		id: 'SuperCodeAI',
+		title: localize('gettingStarted.superCodeAI.title', "Get Started with SuperCode AI"),
+		description: localize('gettingStarted.superCodeAI.description', "Set up your AI assistant and unlock superpowers"),
+		isFeatured: true,
+		icon: setupIcon,
+		walkthroughPageTitle: localize('gettingStarted.superCodeAI.walkthroughPageTitle', 'SuperCode AI Setup'),
+		next: 'Setup',
+		content: {
+			type: 'steps',
+			steps: [
+				{
+					id: 'welcomeSuperCode',
+					title: localize('gettingStarted.welcomeSuperCode.title', "Welcome to SuperCode!"),
+					description: localize('gettingStarted.welcomeSuperCode.description', "SuperCode is an AI-powered IDE that understands your entire codebase. Built with the strength of Superman, it gives you superpowers for coding."),
+					media: { type: 'svg', altText: 'SuperCode Logo', path: 'multi-file-edits.svg' }
+				},
+				{
+					id: 'setApiKey',
+					title: localize('gettingStarted.setApiKey.title', "Set up your OpenRouter API Key"),
+					description: localize('gettingStarted.setApiKey.description.interpolated', "SuperCode AI uses OpenRouter for free access to powerful AI models. Get your free API key and set it up.\n{0}", Button(localize('setApiKey', "Set API Key"), 'command:supercode.setOpenRouterApiKey')),
+					completionEvents: ['onSettingChanged:supercode.openrouter.apiKey'],
+					media: { type: 'svg', altText: 'API Key Setup', path: 'settings.svg' }
+				},
+				{
+					id: 'selectModel',
+					title: localize('gettingStarted.selectModel.title', "Choose your AI model"),
+					description: localize('gettingStarted.selectModel.description.interpolated', "Select from free models like Qwen 2.5 Coder, DeepSeek R1, or Llama 3.3. Premium models are also available.\n{0}", Button(localize('selectModel', "Select AI Model"), 'command:supercode.selectModel')),
+					media: { type: 'svg', altText: 'Model Selection', path: 'extensions.svg' }
+				},
+				{
+					id: 'tryChat',
+					title: localize('gettingStarted.tryChat.title', "Ask your AI assistant"),
+					description: localize('gettingStarted.tryChat.description.interpolated', "Open the chat panel and ask anything about your code. SuperCode AI understands your entire project context.\n{0}", Button(localize('openChat', "Open Chat"), 'command:workbench.action.chat.open')),
+					completionEvents: ['onCommand:workbench.action.chat.open'],
+					media: { type: 'svg', altText: 'AI Chat', path: 'commandPalette.svg' }
+				},
+				{
+					id: 'kryptonTheme',
+					title: localize('gettingStarted.kryptonTheme.title', "Experience Krypton Dark"),
+					description: localize('gettingStarted.kryptonTheme.description.interpolated', "SuperCode comes with Krypton Dark theme - inspired by Superman's home world. Featuring deep blues, vibrant reds, and golden accents.\n{0}", Button(localize('browseThemes', "Browse Themes"), 'command:workbench.action.selectTheme')),
+					completionEvents: ['onSettingChanged:workbench.colorTheme'],
+					media: { type: 'markdown', path: 'theme_picker' }
+				}
+			]
+		}
+	},
+	{
 		id: 'Setup',
 		title: localize('gettingStarted.setup.title', "Get started with SuperCode"),
 		description: localize('gettingStarted.setup.description', "Customize your editor, learn the basics, and start coding"),
