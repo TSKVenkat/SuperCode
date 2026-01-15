@@ -6,8 +6,11 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { dirs } from '../../npm/dirs.ts';
+import { fileURLToPath } from 'url';
 
-const ROOT = path.join(import.meta.dirname, '../../../');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const ROOT = path.join(__dirname, '../../../');
 
 const shasum = crypto.createHash('sha256');
 

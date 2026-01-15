@@ -7,6 +7,9 @@ import debug from 'debug';
 import path from 'path';
 import { downloadArtifact } from '@electron/get';
 import productJson from '../../product.json' with { type: 'json' };
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface ProductConfiguration {
 	quality?: string;
@@ -26,7 +29,7 @@ export async function downloadExplorerDll(outDir: string, quality: string = 'sta
 	}
 
 	// Read and parse checksums file
-	const checksumsFilePath = path.join(path.dirname(import.meta.dirname), 'checksums', 'explorer-dll.txt');
+	const checksumsFilePath = path.join(path.dirname(__dirname), 'checksums', 'explorer-dll.txt');
 	const checksumsContent = fs.readFileSync(checksumsFilePath, 'utf8');
 	const checksums: Record<string, string> = {};
 

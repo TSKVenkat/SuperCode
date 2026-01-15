@@ -438,9 +438,24 @@ export class LanguageModelsService implements ILanguageModelsService {
 
 		this._store.add(this.onDidChangeLanguageModels(() => this._hasUserSelectableModels.set(this._modelCache.size > 0 && Array.from(this._modelCache.values()).some(model => model.isUserSelectable))));
 
+		// Register built-in OpenRouter vendor for SuperCode's free AI models
+		this._vendors.set('openrouter', {
+			vendor: 'openrouter',
+			displayName: 'OpenRouter (Free Models)',
+			configuration: undefined,
+			managementCommand: undefined,
+			when: undefined
+		} as IUserFriendlyLanguageModel);
+		this._logService.info('[LM] Registered built-in OpenRouter vendor');
+
 		this._store.add(languageModelChatProviderExtensionPoint.setHandler((extensions) => {
 
+			// Preserve built-in vendors while clearing extension-contributed ones
+			const builtInVendor = this._vendors.get('openrouter');
 			this._vendors.clear();
+			if (builtInVendor) {
+				this._vendors.set('openrouter', builtInVendor);
+			}
 
 			for (const extension of extensions) {
 				for (const item of Iterable.wrap(extension.value)) {

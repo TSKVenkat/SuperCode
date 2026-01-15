@@ -15,8 +15,11 @@ import through from 'through';
 import sm from 'source-map';
 import { pathToFileURL } from 'url';
 import ternaryStream from 'ternary-stream';
+import { fileURLToPath } from 'url';
 
-const root = path.dirname(path.dirname(import.meta.dirname));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.dirname(path.dirname(__dirname));
 
 export interface ICancellationToken {
 	isCancellationRequested(): boolean;

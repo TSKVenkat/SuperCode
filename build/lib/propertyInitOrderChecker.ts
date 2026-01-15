@@ -7,8 +7,11 @@
 import * as ts from 'typescript';
 import * as path from 'path';
 import * as fs from 'fs';
+import { fileURLToPath } from 'url';
 
-const TS_CONFIG_PATH = path.join(import.meta.dirname, '../../', 'src', 'tsconfig.json');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const TS_CONFIG_PATH = path.join(__dirname, '../../', 'src', 'tsconfig.json');
 
 //
 // #############################################################################################

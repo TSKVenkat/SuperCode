@@ -6,6 +6,9 @@ import path from 'path';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
 import * as os from 'os';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 if (!process.env['VSCODE_SKIP_NODE_VERSION_CHECK']) {
 	// Get the running Node.js version
@@ -15,7 +18,7 @@ if (!process.env['VSCODE_SKIP_NODE_VERSION_CHECK']) {
 	const patchNodeVersion = parseInt(nodeVersion![3]);
 
 	// Get the required Node.js version from .nvmrc
-	const nvmrcPath = path.join(import.meta.dirname, '..', '..', '.nvmrc');
+	const nvmrcPath = path.join(__dirname, '..', '..', '.nvmrc');
 	const requiredVersion = fs.readFileSync(nvmrcPath, 'utf8').trim();
 	const requiredVersionMatch = /^(\d+)\.(\d+)\.(\d+)/.exec(requiredVersion);
 
@@ -100,7 +103,7 @@ function installHeaders() {
 	const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 	child_process.execSync(`${npm} ${process.env.npm_command || 'ci'}`, {
 		env: process.env,
-		cwd: path.join(import.meta.dirname, 'gyp'),
+		cwd: path.join(__dirname, 'gyp'),
 		stdio: 'inherit'
 	});
 
@@ -108,11 +111,11 @@ function installHeaders() {
 	// file checked into our repository. So from that point it is safe to construct the path
 	// to that executable
 	const node_gyp = process.platform === 'win32'
-		? path.join(import.meta.dirname, 'gyp', 'node_modules', '.bin', 'node-gyp.cmd')
-		: path.join(import.meta.dirname, 'gyp', 'node_modules', '.bin', 'node-gyp');
+		? path.join(__dirname, 'gyp', 'node_modules', '.bin', 'node-gyp.cmd')
+		: path.join(__dirname, 'gyp', 'node_modules', '.bin', 'node-gyp');
 
-	const local = getHeaderInfo(path.join(import.meta.dirname, '..', '..', '.npmrc'));
-	const remote = getHeaderInfo(path.join(import.meta.dirname, '..', '..', 'remote', '.npmrc'));
+	const local = getHeaderInfo(path.join(__dirname, '..', '..', '.npmrc'));
+	const remote = getHeaderInfo(path.join(__dirname, '..', '..', 'remote', '.npmrc'));
 
 	if (local !== undefined) {
 		// Both disturl and target come from a file checked into our repository
@@ -135,7 +138,7 @@ function installHeaders() {
 		if (fs.existsSync(localHeaderPath)) {
 			console.log('Applying v8-source-location.patch to', localHeaderPath);
 			try {
-				child_process.execFileSync('patch', ['-p0', '-i', path.join(import.meta.dirname, 'gyp', 'custom-headers', 'v8-source-location.patch')], {
+				child_process.execFileSync('patch', ['-p0', '-i', path.join(__dirname, 'gyp', 'custom-headers', 'v8-source-location.patch')], {
 					cwd: localHeaderPath
 				});
 			} catch (error) {

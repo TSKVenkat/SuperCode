@@ -5,13 +5,16 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 if (process.argv.length !== 3) {
 	console.error('Usage: node listNodeModules.ts OUTPUT_FILE');
 	process.exit(-1);
 }
 
-const ROOT = path.join(import.meta.dirname, '../../../');
+const ROOT = path.join(__dirname, '../../../');
 
 function findNodeModulesFiles(location: string, inNodeModules: boolean, result: string[]) {
 	const entries = fs.readdirSync(path.join(ROOT, location));

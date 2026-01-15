@@ -8,6 +8,10 @@ import path, { join } from 'path';
 import { urlToEsmPlugin } from './rollup-url-to-module-plugin/index.mjs';
 import { statSync } from 'fs';
 import { pathToFileURL } from 'url';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function injectBuiltinExtensionsPlugin(): Plugin {
 	let builtinExtensionsCache: unknown[] | null = null;
@@ -184,7 +188,7 @@ export default defineConfig({
 		fs: {
 			allow: [
 				// To allow loading from sources, not needed when loading monaco-editor from npm package
-				join(import.meta.dirname, '../../../')
+				join(__dirname, '../../../')
 			]
 		}
 	}

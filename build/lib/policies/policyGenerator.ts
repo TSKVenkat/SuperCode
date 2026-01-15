@@ -15,9 +15,12 @@ import { StringEnumPolicy } from './stringEnumPolicy.ts';
 import { StringPolicy } from './stringPolicy.ts';
 import { type Version, type LanguageTranslations, type Policy, type Translations, Languages, type ProductJson } from './types.ts';
 import { renderGP, renderJsonPolicies, renderMacOSPolicy } from './render.ts';
+import { fileURLToPath } from 'url';
 
-const product: ProductJson = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '../../../product.json'), 'utf8'));
-const packageJson = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, '../../../package.json'), 'utf8'));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const product: ProductJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../product.json'), 'utf8'));
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf8'));
 
 async function getSpecificNLS(resourceUrlTemplate: string, languageId: string, version: Version): Promise<LanguageTranslations> {
 	const resource = {

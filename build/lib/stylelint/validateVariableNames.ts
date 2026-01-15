@@ -5,13 +5,16 @@
 
 import { readFileSync } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const RE_VAR_PROP = /var\(\s*(--([\w\-\.]+))/g;
 
 let knownVariables: Set<string> | undefined;
 function getKnownVariableNames() {
 	if (!knownVariables) {
-		const knownVariablesFileContent = readFileSync(path.join(import.meta.dirname, './vscode-known-variables.json'), 'utf8').toString();
+		const knownVariablesFileContent = readFileSync(path.join(__dirname, './vscode-known-variables.json'), 'utf8').toString();
 		const knownVariablesInfo = JSON.parse(knownVariablesFileContent);
 		knownVariables = new Set([...knownVariablesInfo.colors, ...knownVariablesInfo.others, ...(knownVariablesInfo.sizes || [])] as string[]);
 	}

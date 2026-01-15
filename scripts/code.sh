@@ -26,7 +26,7 @@ function code() {
 
 	# Get electron, compile, built-in extensions
 	if [[ -z "${VSCODE_SKIP_PRELAUNCH}" ]]; then
-		node build/lib/preLaunch.ts
+		npx -y tsx build/lib/preLaunch.ts
 	fi
 
 	# Manage built-in extensions

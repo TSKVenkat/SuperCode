@@ -5,8 +5,11 @@
 
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 
-const root = path.join(import.meta.dirname, '..', '..');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const root = path.join(__dirname, '..', '..');
 
 /**
  * Writes a `outDir/date` file with the contents of the build

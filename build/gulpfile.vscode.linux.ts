@@ -18,9 +18,12 @@ import { recommendedDeps as debianRecommendedDependencies } from './linux/debian
 import * as path from 'path';
 import * as cp from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const exec = promisify(cp.exec);
-const root = path.dirname(import.meta.dirname);
+const root = path.dirname(__dirname);
 const commit = getVersion(root);
 
 const linuxPackageRevision = Math.floor(new Date().getTime() / 1000);

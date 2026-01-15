@@ -11,6 +11,9 @@ import * as util from './util.ts';
 import { getVersion } from './getVersion.ts';
 import electron from '@vscode/gulp-electron';
 import json from 'gulp-json-editor';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 type DarwinDocumentSuffix = 'document' | 'script' | 'file' | 'source code';
 type DarwinDocumentType = {
@@ -26,7 +29,7 @@ function isDocumentSuffix(str?: string): str is DarwinDocumentSuffix {
 	return str === 'document' || str === 'script' || str === 'file' || str === 'source code';
 }
 
-const root = path.dirname(path.dirname(import.meta.dirname));
+const root = path.dirname(path.dirname(__dirname));
 const product = JSON.parse(fs.readFileSync(path.join(root, 'product.json'), 'utf8'));
 const commit = getVersion(root);
 

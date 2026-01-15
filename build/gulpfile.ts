@@ -11,6 +11,10 @@ import { compileExtensionMediaTask, compileExtensionsTask, watchExtensionsTask }
 import * as compilation from './lib/compilation.ts';
 import * as task from './lib/task.ts';
 import * as util from './lib/util.ts';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 EventEmitter.defaultMaxListeners = 100;
 
@@ -52,7 +56,7 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 // Load all the gulpfiles only if running tasks other than the editor tasks
-glob.sync('gulpfile.*.ts', { cwd: import.meta.dirname })
+glob.sync('gulpfile.*.ts', { cwd: __dirname })
 	.forEach(f => {
 		return require(`./${f}`);
 	});
