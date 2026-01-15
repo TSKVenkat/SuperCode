@@ -16,6 +16,7 @@ import { ILogService } from '../../../../platform/log/common/log.js';
 import { ITextModel } from '../../../../editor/common/model.js';
 import { Categories } from '../../../../platform/action/common/actionCommonCategories.js';
 import { getServicesManager } from './superCodeServices.js';
+import { WalkthroughGenerator } from '../../supercode/utils/walkthroughGenerator.js';
 
 // ============================================================================
 // COMMAND IDS
@@ -86,6 +87,7 @@ registerAction2(class extends Action2 {
 
         try {
             const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const walkthroughGen = new WalkthroughGenerator(logService, fileService);
             const code = model.getValue();
             const filePath = model.uri.path;
 
@@ -99,6 +101,28 @@ registerAction2(class extends Action2 {
             if (result.tests.content) {
                 // Write test file
                 await services.services?.testGenerator.writeTestFile(workspaceFolder.uri, result.tests);
+
+                // Extract function names from code for walkthrough
+                const functionMatches = code.match(/(?:function|const|let|var)\s+(\w+)/g) || [];
+                const functions = functionMatches.map((match: string) => match.split(/\s+/)[1]);
+
+                // Generate walkthrough
+                const walkthrough = walkthroughGen.generateTestWalkthrough({
+                    framework: result.tests.framework,
+                    testCount: functions.length,
+                    filePath: filePath,
+                    functions: functions,
+                    timestamp: new Date()
+                });
+
+                const walkthroughUri = await walkthroughGen.saveWalkthrough(
+                    workspaceFolder.uri,
+                    walkthrough,
+                    `test-generation-${Date.now()}.md`
+                );
+
+                // Open walkthrough
+                await editorService.openEditor({ resource: walkthroughUri });
 
                 notificationService.notify({
                     severity: Severity.Info,
