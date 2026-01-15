@@ -175,6 +175,8 @@ registerAction2(class extends Action2 {
 
         try {
             const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const walkthroughGen = new WalkthroughGenerator(logService, fileService);
+            const editorService = accessor.get(IEditorService);
 
             notificationService.notify({
                 severity: Severity.Info,
@@ -184,6 +186,39 @@ registerAction2(class extends Action2 {
             const result = await services.handleSecurityCommand(workspaceFolder.uri);
             const totalIssues = result.report.codeVulnerabilities.length + result.report.dependencyVulnerabilities.length;
 
+            // Count by severity
+            const severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+            for (const vuln of result.report.codeVulnerabilities) {
+                const sev = vuln.severity.toLowerCase() as keyof typeof severityCounts;
+                if (sev in severityCounts) severityCounts[sev]++;
+            }
+
+            // Generate walkthrough
+            const walkthrough = walkthroughGen.generateSecurityWalkthrough({
+                totalIssues,
+                critical: severityCounts.critical,
+                high: severityCounts.high,
+                medium: severityCounts.medium,
+                low: severityCounts.low,
+                scannedFiles: result.report.scannedFiles,
+                vulnerabilities: result.report.codeVulnerabilities.map(v => ({
+                    type: v.title,
+                    file: v.file,
+                    line: v.line,
+                    severity: v.severity.toLowerCase()
+                })),
+                timestamp: new Date()
+            });
+
+            const walkthroughUri = await walkthroughGen.saveWalkthrough(
+                workspaceFolder.uri,
+                walkthrough,
+                `security-scan-${Date.now()}.md`
+            );
+
+            // Open walkthrough
+            await editorService.openEditor({ resource: walkthroughUri });
+
             if (totalIssues === 0) {
                 notificationService.notify({
                     severity: Severity.Info,
@@ -192,7 +227,7 @@ registerAction2(class extends Action2 {
             } else {
                 notificationService.notify({
                     severity: Severity.Warning,
-                    message: `⚠️ Found ${totalIssues} security issue(s). Check the Problems panel.`
+                    message: `⚠️ Found ${totalIssues} security issue(s). Check the report.`
                 });
             }
         } catch (error) {
@@ -237,6 +272,8 @@ registerAction2(class extends Action2 {
 
         try {
             const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const walkthroughGen = new WalkthroughGenerator(logService, fileService);
+            const editorService = accessor.get(IEditorService);
 
             notificationService.notify({
                 severity: Severity.Info,
@@ -244,6 +281,27 @@ registerAction2(class extends Action2 {
             });
 
             const result = await services.handleOnboardCommand(workspaceFolder.uri);
+
+            // Generate walkthrough
+            const walkthrough = walkthroughGen.generateOnboardingWalkthrough({
+                projectName: result.result.project.name,
+                type: result.result.project.type,
+                framework: result.result.project.framework,
+                language: result.result.project.language,
+                dependencies: result.result.project.dependencies,
+                setupSteps: result.result.setupSteps,
+                suggestions: result.result.suggestedAdditions,
+                timestamp: new Date()
+            });
+
+            const walkthroughUri = await walkthroughGen.saveWalkthrough(
+                workspaceFolder.uri,
+                walkthrough,
+                `onboarding-${Date.now()}.md`
+            );
+
+            // Open walkthrough
+            await editorService.openEditor({ resource: walkthroughUri });
 
             // Ask user if they want to generate README
             const action = await quickInputService.pick([
