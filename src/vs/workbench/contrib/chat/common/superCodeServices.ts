@@ -6,7 +6,6 @@
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IFileService } from '../../../../platform/files/common/files.js';
 import { IStorageService } from '../../../../platform/storage/common/storage.js';
-import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
 import { URI } from '../../../../base/common/uri.js';
 
 // Import all services
@@ -41,8 +40,7 @@ export class SuperCodeServicesManager {
     constructor(
         private readonly logService: ILogService,
         private readonly fileService: IFileService,
-        private readonly storageService: IStorageService,
-        private readonly workspaceContextService: IWorkspaceContextService
+        private readonly storageService: IStorageService
     ) {
         this.logService.info('[SuperCodeServices] Manager created');
     }
@@ -289,15 +287,13 @@ let _servicesManager: SuperCodeServicesManager | null = null;
 export function getServicesManager(
     logService: ILogService,
     fileService: IFileService,
-    storageService: IStorageService,
-    workspaceContextService: IWorkspaceContextService
+    storageService: IStorageService
 ): SuperCodeServicesManager {
     if (!_servicesManager) {
         _servicesManager = new SuperCodeServicesManager(
             logService,
             fileService,
-            storageService,
-            workspaceContextService
+            storageService
         );
     }
     return _servicesManager;

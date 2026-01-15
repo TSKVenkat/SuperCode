@@ -86,7 +86,7 @@ registerAction2(class extends Action2 {
         }
 
         try {
-            const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const services = getServicesManager(logService, fileService, storageService);
             const walkthroughGen = new WalkthroughGenerator(logService, fileService);
             const code = model.getValue();
             const filePath = model.uri.path;
@@ -174,7 +174,7 @@ registerAction2(class extends Action2 {
         }
 
         try {
-            const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const services = getServicesManager(logService, fileService, storageService);
             const walkthroughGen = new WalkthroughGenerator(logService, fileService);
             const editorService = accessor.get(IEditorService);
 
@@ -271,7 +271,7 @@ registerAction2(class extends Action2 {
         }
 
         try {
-            const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const services = getServicesManager(logService, fileService, storageService);
             const walkthroughGen = new WalkthroughGenerator(logService, fileService);
             const editorService = accessor.get(IEditorService);
 
@@ -346,7 +346,7 @@ registerAction2(class extends Action2 {
     async run(accessor: ServicesAccessor): Promise<void> {
         const notificationService = accessor.get(INotificationService);
         const quickInputService = accessor.get(IQuickInputService);
-        const workspaceContextService = accessor.get(IWorkspaceContextService);
+
         const fileService = accessor.get(IFileService);
         const storageService = accessor.get(IStorageService);
         const logService = accessor.get(ILogService);
@@ -359,7 +359,7 @@ registerAction2(class extends Action2 {
         if (!goal) return;
 
         try {
-            const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const services = getServicesManager(logService, fileService, storageService);
             const result = await services.handlePlanCommand(goal, '');
 
             notificationService.notify({
@@ -392,7 +392,7 @@ registerAction2(class extends Action2 {
     async run(accessor: ServicesAccessor): Promise<void> {
         const notificationService = accessor.get(INotificationService);
         const quickInputService = accessor.get(IQuickInputService);
-        const workspaceContextService = accessor.get(IWorkspaceContextService);
+
         const fileService = accessor.get(IFileService);
         const storageService = accessor.get(IStorageService);
         const logService = accessor.get(ILogService);
@@ -405,7 +405,7 @@ registerAction2(class extends Action2 {
         if (!query) return;
 
         try {
-            const services = getServicesManager(logService, fileService, storageService, workspaceContextService);
+            const services = getServicesManager(logService, fileService, storageService);
 
             notificationService.notify({
                 severity: Severity.Info,
