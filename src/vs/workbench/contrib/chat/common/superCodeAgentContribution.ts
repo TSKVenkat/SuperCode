@@ -28,8 +28,7 @@ import { IStorageService } from '../../../../platform/storage/common/storage.js'
 import { ContextManager } from './contextManager.js';
 import { getAgenticExecutor } from '../../supercode/agent/agenticContribution.js';
 
-import { VSBuffer } from '../../../../base/common/buffer.js';
-import { URI } from '../../../../base/common/uri.js';
+
 
 // ============================================================================
 // SYSTEM PROMPTS - Personality and context-specific instructions

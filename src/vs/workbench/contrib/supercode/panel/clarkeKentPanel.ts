@@ -7,7 +7,8 @@ import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.j
 import { IInstantiationService } from '../../../../platform/instantiation/common/instantiation.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IWorkbenchContribution, registerWorkbenchContribution2, WorkbenchPhase } from '../../../common/contributions.js';
-import { IViewsRegistry, IViewDescriptor, Extensions as ViewExtensions, IViewContainersRegistry, ViewContainerLocation, ViewContainer, IViewsService } from '../../../common/views.js';
+import { IViewsRegistry, IViewDescriptor, Extensions as ViewExtensions, IViewContainersRegistry, ViewContainerLocation, IViewDescriptorService } from '../../../common/views.js';
+import { IViewsService } from '../../../services/views/common/viewsService.js';
 import { Registry } from '../../../../platform/registry/common/platform.js';
 import { SyncDescriptor } from '../../../../platform/instantiation/common/descriptors.js';
 import { ViewPaneContainer } from '../../../browser/parts/views/viewPaneContainer.js';
@@ -220,12 +221,12 @@ class ClarkeKentViewPane extends ViewPane {
         @IThemeService themeService: IThemeService,
         @ITelemetryService telemetryService: ITelemetryService,
         @IHoverService hoverService: IHoverService,
-        @ILogService private readonly logService: ILogService
+        @IViewDescriptorService viewDescriptorService: IViewDescriptorService,
     ) {
-        super(options, keybindingService, contextMenuService, configurationService, contextKeyService, viewsService, instantiationService, openerService, themeService, telemetryService, hoverService);
-        
+        super(options, keybindingService, contextMenuService, configurationService, contextKeyService, viewDescriptorService, instantiationService, openerService, themeService, hoverService);
+
         this._panelService = getClarkeKentPanelService();
-        
+
         // Listen to state changes
         this._disposables.add(this._panelService.onStateChange(state => {
             this.updateUI(state);
@@ -236,7 +237,7 @@ class ClarkeKentViewPane extends ViewPane {
         super.renderBody(container);
         this._container = container;
         container.classList.add('clarke-kent-panel');
-        
+
         // Initial render
         this.renderContent(this._panelService.state);
     }

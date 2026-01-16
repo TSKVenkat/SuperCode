@@ -650,7 +650,7 @@ class OpenRouterContribution extends Disposable implements IWorkbenchContributio
         @ISecretStorageService private readonly secretStorageService: ISecretStorageService,
         @IStorageService _storageService: IStorageService,
         @INotificationService private readonly notificationService: INotificationService,
-        @IWorkspaceContextService private readonly workspaceContextService: IWorkspaceContextService
+        @IWorkspaceContextService workspaceContextService: IWorkspaceContextService
     ) {
         super();
 
