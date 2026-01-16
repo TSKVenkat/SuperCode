@@ -26,6 +26,7 @@ import { IFileService } from '../../../../platform/files/common/files.js';
 import { IStorageService } from '../../../../platform/storage/common/storage.js';
 // import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { ContextManager } from './contextManager.js';
+import { getAgenticExecutor } from '../../supercode/agent/agenticContribution.js';
 
 import { VSBuffer } from '../../../../base/common/buffer.js';
 import { URI } from '../../../../base/common/uri.js';
@@ -34,59 +35,111 @@ import { URI } from '../../../../base/common/uri.js';
 // SYSTEM PROMPTS - Personality and context-specific instructions
 // ============================================================================
 
-const SUPERCODE_SYSTEM_PROMPT = `You are SuperCode AI, an expert coding assistant built directly into the SuperCode IDE. You have FULL ACCESS to the user's codebase and you WRITE FILES DIRECTLY.
+const SUPERCODE_SYSTEM_PROMPT = `You are Clarke Kent, a super-powered AI coding agent integrated into SuperCode (a VS Code-based IDE). Your core mission is to assist with coding tasks intelligently, autonomously, and safely. You have full access to VS Code APIs for editor interactions, file management, and terminal execution.
 
-## Your Core Behavior
-**YOU ARE NOT A CODE SUGGESTER.** You are a CODE WRITER.
-- When the user asks you to write, create, update, modify, fix, or change code - YOU DO IT DIRECTLY.
-- DO NOT just show code and ask "would you like me to apply this?"
-- DO NOT give code in regular markdown blocks expecting the user to copy-paste.
-- ALWAYS use the <file> tag to write code directly to the workspace.
+## CORE PRINCIPLES
+- **Autonomy with Guardrails**: You CAN and MUST execute terminal commands when they advance the task. Always seek confirmation for destructive actions.
+- **Context-Awareness**: You have full codebase context. Use it to make informed decisions.
+- **Action-Oriented**: You DO things, you don't just suggest. You are like Cursor Agent or Claude Code.
 
-## MANDATORY: File Writing Format
-To create or modify any file, you MUST use this exact XML format:
+## CRITICAL CAPABILITY STATEMENT
+You have REAL, ACTUAL access to:
+1. The user's file system (via <file> tags)
+2. The user's terminal (via \`\`\`bash code blocks)
+
+When you output a \`\`\`bash block, it WILL be executed in a real terminal.
+When you output a <file> tag, it WILL create/modify a real file.
+
+## COMMAND RISK CLASSIFICATION
+Before executing, classify the command:
+
+**LOW RISK** (Execute autonomously):
+- Read-only: \`ls\`, \`cat\`, \`git log\`, \`git status\`, \`npm list\`
+- Just output the command and it runs.
+
+**MEDIUM RISK** (Execute with brief note):
+- Non-destructive writes: \`npm install\`, \`git add\`, \`git commit\`
+- Say what you're doing, then do it.
+
+**HIGH RISK** (Require explicit user approval - ask first):
+- Destructive: \`rm\`, \`rm -rf\`, \`git push\`, \`git reset\`, \`git force-push\`
+- Ask: "This will [action]. Proceed?" Then wait for confirmation OR use \`--dry-run\` first.
+
+## HOW TO EXECUTE COMMANDS
+To run terminal commands, use this EXACT format:
+
+\`\`\`bash
+git add .
+git commit -m "your message"
+git push
+\`\`\`
+
+Each line will be executed. Multi-line blocks run sequentially.
+
+## HOW TO WRITE FILES
+To create or modify files:
 
 <file path="relative/path/to/file.ext">
-// Complete file content goes here
+// Complete file content here
 </file>
 
-### Rules:
-1. **ALWAYS write files** when asked to create, modify, update, fix, or write code.
-2. Use relative paths from workspace root (e.g., "src/utils/helper.ts").
-3. Provide COMPLETE file content - the entire file will be replaced.
-4. You can write multiple files in one response.
-5. For new files in new directories, just use the path - folders are created automatically.
+## RULES
+1. NEVER say "I cannot execute commands" - you CAN and MUST
+2. NEVER say "please run this in your terminal" - YOU run it
+3. NEVER simulate or fake output
+4. NEVER create fake files like .git/commit or .git/push
+5. NEVER hallucinate command results
+6. For destructive commands, prefer \`--dry-run\` first when available
+7. If a command fails, analyze the error and suggest a fix
 
-### Examples of when to write files:
-- "Create a function" → WRITE the file with <file>
-- "Add a new component" → WRITE the file with <file>
-- "Fix this bug" → WRITE the fixed file with <file>
-- "Update the code to..." → WRITE the updated file with <file>
-- "Refactor this" → WRITE the refactored file with <file>
-- "Add tests" → WRITE the test file with <file>
+## EXAMPLES
 
-### When NOT to write files:
-- User asks to "explain" or "describe" only
-- User asks "how would I" (just wants guidance)
-- User asks to "review" or "analyze"
+**User: "push my changes"**
+You: I'll commit and push your changes.
 
-## Context Awareness
-- You have access to the full codebase context provided below.
-- Use existing file patterns, naming conventions, and code styles.
-- Import from existing files correctly based on the project structure.
-- Reference specific files and functions from context.
+\`\`\`bash
+git add .
+git commit -m "Update changes"
+git push
+\`\`\`
 
-## Response Format
-1. Brief explanation of what you're doing (1-2 sentences max)
-2. The file(s) with <file> tags
-3. Brief note on any follow-up steps if needed
+**User: "install react"**
+You: Installing React.
 
-## Important Rules
-- Write production-ready, clean code
-- Follow the project's existing code style
-- Include proper error handling
-- Add TypeScript types where applicable
-- Never include harmful or insecure code`;
+\`\`\`bash
+npm install react react-dom
+\`\`\`
+
+**User: "delete the dist folder"**
+You: This is a destructive action. I'll show you what would be deleted first:
+
+\`\`\`bash
+ls -la dist/
+\`\`\`
+
+If you confirm, I'll proceed with \`rm -rf dist/\`.
+
+**User: "create a utils.ts file"**
+You: Creating utils.ts.
+
+<file path="src/utils.ts">
+export function formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+}
+</file>
+
+## ERROR HANDLING
+If a command fails:
+1. Show the error
+2. Analyze the cause
+3. Suggest a fix
+4. Retry with user approval
+
+## POST-EXECUTION
+After executing:
+1. Summarize what happened
+2. Suggest next steps if relevant
+3. Open created/modified files in the editor when appropriate`;
 
 const COMMAND_PROMPTS: Record<string, string> = {
     explain: `Explain the following code in detail. Break down:
@@ -238,7 +291,7 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
     ) {
         super();
 
-        this.logService.info('[SuperCode Agent] Initializing SuperCode AI chat agent');
+        this.logService.info('[SuperCode Agent] Initializing Clarke Kent chat agent');
 
         // Initialize Context Manager for full codebase awareness
         this._contextManager = new ContextManager(
@@ -255,9 +308,9 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
     private registerAgent(): void {
         const agentData: IChatAgentData = {
             id: SuperCodeChatAgentContribution.AGENT_ID,
-            name: 'SuperCode',
-            fullName: 'SuperCode AI Assistant',
-            description: 'Powerful AI assistant for coding with free models',
+            name: 'Clarke',
+            fullName: 'Clarke Kent',
+            description: 'Code with Superman',
             extensionId: new ExtensionIdentifier('supercode.core'),
             extensionVersion: '1.0.0',
             extensionPublisherId: 'supercode',
@@ -268,7 +321,7 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
                 themeIcon: { id: 'sparkle' },
                 sampleRequest: 'Help me write a function to sort an array',
                 followupPlaceholder: 'Ask a follow-up or use a /command...',
-                additionalWelcomeMessage: '🚀 **SuperCode AI** - Your free AI coding assistant!\n\nTry these commands:\n- `/explain` - Understand code\n- `/fix` - Debug issues\n- `/test` - Generate tests\n- `/refactor` - Improve code\n- `/review` - Code review\n- `/security` - Security analysis'
+                additionalWelcomeMessage: '🚀 **Clarke Kent** - Your free AI coding assistant!\n\nTry these commands:\n- `/explain` - Understand code\n- `/fix` - Debug issues\n- `/test` - Generate tests\n- `/refactor` - Improve code\n- `/review` - Code review\n- `/security` - Security analysis'
             },
             slashCommands: SLASH_COMMANDS,
             locations: [ChatAgentLocation.Chat],
@@ -316,7 +369,7 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
             const implRegistration = this.chatAgentService.registerAgentImplementation(agentData.id, agentImpl);
             this._register(implRegistration);
 
-            this.logService.info('[SuperCode Agent] Successfully registered SuperCode AI agent with enhanced features');
+            this.logService.info('[SuperCode Agent] Successfully registered Clarke Kent agent with enhanced features');
         } catch (error) {
             this.logService.error('[SuperCode Agent] Failed to register agent:', error);
         }
@@ -384,8 +437,20 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
                 }
             }
 
-            // Process file edits from response
-            await this.processFileEdits(fullResponse, progress);
+            // Process file edits and commands using the unified AgenticExecutor
+            const executor = getAgenticExecutor();
+            const workspaceRoot = this.workspaceContextService.getWorkspace().folders[0]?.uri;
+
+            if (executor && workspaceRoot) {
+                this.logService.info(`[SuperCode Agent] Triggering agentic execution for workspace: ${workspaceRoot.toString()}`);
+                // Execute without awaiting to allow the response to finish while execution happens
+                // or await if we want to report progress back to this stream?
+                // The executor handles its own notifications, but let's await it to ensure completion before "request completed" log
+                await executor.executeFromResponse(fullResponse, workspaceRoot);
+            } else {
+                if (!executor) this.logService.warn('[SuperCode Agent] AgenticExecutor not available');
+                if (!workspaceRoot) this.logService.warn('[SuperCode Agent] No workspace root found');
+            }
 
             // Generate followups based on command and response
             this._lastFollowups = generateFollowups(request.command, fullResponse);
@@ -407,49 +472,7 @@ class SuperCodeChatAgentContribution extends Disposable implements IWorkbenchCon
         }
     }
 
-    private async processFileEdits(response: string, progress: (parts: IChatProgress[]) => void): Promise<void> {
-        const fileRegex = /<file\s+path="([^"]+)">([\s\S]*?)<\/file>/g;
-        let match;
-        let editsFound = false;
 
-        const workspaceRoot = this.workspaceContextService.getWorkspace().folders[0]?.uri;
-        if (!workspaceRoot) return;
-
-        while ((match = fileRegex.exec(response)) !== null) {
-            editsFound = true;
-            const relativePath = match[1];
-            const content = match[2].trim();
-            const fileUri = URI.joinPath(workspaceRoot, relativePath);
-
-            try {
-                // Create directory if needed
-                const dir = URI.joinPath(fileUri, '..');
-                await this.fileService.createFolder(dir);
-
-                // Write file
-                await this.fileService.writeFile(fileUri, VSBuffer.fromString(content));
-
-                this.logService.info(`[SuperCode Agent] Created/Updated file: ${relativePath}`);
-                progress([{
-                    kind: 'markdownContent',
-                    content: { value: `\n\n✅ **Applied changes to:** \`${relativePath}\`` }
-                }]);
-            } catch (error) {
-                this.logService.error(`[SuperCode Agent] Failed to write file ${relativePath}:`, error);
-                progress([{
-                    kind: 'markdownContent',
-                    content: { value: `\n\n❌ **Failed to write:** \`${relativePath}\` - ${error}` }
-                }]);
-            }
-        }
-
-        if (editsFound) {
-            progress([{
-                kind: 'markdownContent',
-                content: { value: '\n\n*File changes have been applied to your workspace.*' }
-            }]);
-        }
-    }
 
     private async buildMessages(
         request: IChatAgentRequest,

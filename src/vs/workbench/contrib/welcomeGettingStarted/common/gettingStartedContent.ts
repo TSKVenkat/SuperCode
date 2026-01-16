@@ -251,11 +251,11 @@ function createCopilotSetupStep(id: string, button: string, when: string, includ
 export const walkthroughs: GettingStartedWalkthroughContent = [
 	{
 		id: 'SuperCodeAI',
-		title: localize('gettingStarted.superCodeAI.title', "Get Started with SuperCode AI"),
+		title: localize('gettingStarted.superCodeAI.title', "Get Started with Clarke Kent"),
 		description: localize('gettingStarted.superCodeAI.description', "Set up your AI assistant and unlock superpowers"),
 		isFeatured: true,
 		icon: setupIcon,
-		walkthroughPageTitle: localize('gettingStarted.superCodeAI.walkthroughPageTitle', 'SuperCode AI Setup'),
+		walkthroughPageTitle: localize('gettingStarted.superCodeAI.walkthroughPageTitle', 'Clarke Kent Setup'),
 		next: 'Setup',
 		content: {
 			type: 'steps',
@@ -269,7 +269,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				{
 					id: 'setApiKey',
 					title: localize('gettingStarted.setApiKey.title', "Set up your OpenRouter API Key"),
-					description: localize('gettingStarted.setApiKey.description.interpolated', "SuperCode AI uses OpenRouter for free access to powerful AI models. Get your free API key and set it up.\n{0}", Button(localize('setApiKey', "Set API Key"), 'command:supercode.setOpenRouterApiKey')),
+					description: localize('gettingStarted.setApiKey.description.interpolated', "Clarke Kent uses OpenRouter for free access to powerful AI models. Get your free API key and set it up.\n{0}", Button(localize('setApiKey', "Set API Key"), 'command:supercode.setOpenRouterApiKey')),
 					completionEvents: ['onSettingChanged:supercode.openrouter.apiKey'],
 					media: { type: 'svg', altText: 'API Key Setup', path: 'settings.svg' }
 				},
@@ -282,7 +282,7 @@ export const walkthroughs: GettingStartedWalkthroughContent = [
 				{
 					id: 'tryChat',
 					title: localize('gettingStarted.tryChat.title', "Ask your AI assistant"),
-					description: localize('gettingStarted.tryChat.description.interpolated', "Open the chat panel and ask anything about your code. SuperCode AI understands your entire project context.\n{0}", Button(localize('openChat', "Open Chat"), 'command:workbench.action.chat.open')),
+					description: localize('gettingStarted.tryChat.description.interpolated', "Open the chat panel and ask anything about your code. Clarke Kent understands your entire project context.\n{0}", Button(localize('openChat', "Open Chat"), 'command:workbench.action.chat.open')),
 					completionEvents: ['onCommand:workbench.action.chat.open'],
 					media: { type: 'svg', altText: 'AI Chat', path: 'commandPalette.svg' }
 				},
