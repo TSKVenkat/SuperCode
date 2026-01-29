@@ -242,7 +242,7 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
                     [ChatAgentLocation.Chat]: preferredModelId ? model.id === preferredModelId : model.isDefault
                 },
                 isUserSelectable: true,
-                modelPickerCategory: { label: 'SuperCode AI (Free)', order: 0 },
+                modelPickerCategory: { label: 'Clarke Kent (Free)', order: 0 },
                 auth: apiKey ? { providerLabel: 'OpenRouter', accountLabel: 'API Key' } : undefined,
                 capabilities: {
                     vision: model.family === 'gemini',

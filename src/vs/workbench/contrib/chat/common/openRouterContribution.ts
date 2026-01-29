@@ -1,6 +1,7 @@
 /*---------------------------------------------------------------------------------------------
  *  OpenRouter Language Model Contribution for SuperCode
  *  Auto-registers OpenRouter as a language model vendor with enhanced commands
+ *  + Agentic auto-execution of file writes and commands
  *--------------------------------------------------------------------------------------------*/
 
 import { Disposable } from '../../../../base/common/lifecycle.js';
@@ -21,9 +22,14 @@ import { KeyMod, KeyCode } from '../../../../base/common/keyCodes.js';
 import { KeybindingWeight } from '../../../../platform/keybinding/common/keybindingsRegistry.js';
 import { IStorageService, StorageScope, StorageTarget } from '../../../../platform/storage/common/storage.js';
 import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
+import { IWorkspaceContextService } from '../../../../platform/workspace/common/workspace.js';
+
+// Agentic imports
+import { AgenticResponseParser } from '../../supercode/agent/agenticResponseParser.js';
+import { getAgenticExecutor } from '../../supercode/agent/agenticContribution.js';
 
 // ============================================================================
-// SUPERCODE AI MODELS (Free & Premium via OpenRouter)
+// Clarke Kent MODELS (Free & Premium via OpenRouter)
 // ============================================================================
 
 interface SuperCodeModel {
@@ -324,7 +330,8 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
     constructor(
         private readonly logService: ILogService,
         private readonly secretStorageService: ISecretStorageService,
-        private readonly storageService: IStorageService
+        private readonly storageService: IStorageService,
+        private readonly workspaceContextService: IWorkspaceContextService
     ) {
         this._preferredModelId = this.storageService.get(PREFERRED_MODEL_STORAGE_KEY, StorageScope.PROFILE);
     }
@@ -510,6 +517,7 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
     ): AsyncIterable<IChatResponsePart> {
         const decoder = new TextDecoder();
         let buffer = '';
+        let fullResponse = ''; // Accumulate full response for agentic parsing
 
         try {
             while (true) {
@@ -534,6 +542,7 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
                             const parsed = JSON.parse(data);
                             const content = parsed.choices?.[0]?.delta?.content;
                             if (content) {
+                                fullResponse += content; // Accumulate
                                 yield { type: 'text', value: content };
                             }
                         } catch {
@@ -544,6 +553,65 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
             }
         } finally {
             reader.releaseLock();
+
+            // After stream completes, check for agentic actions
+            if (fullResponse.length > 0) {
+                this.tryAutoExecute(fullResponse);
+            }
+        }
+    }
+
+    /**
+     * Try to auto-execute detected file/command actions from response
+     */
+    private tryAutoExecute(response: string): void {
+        try {
+            // Check if response contains file blocks
+            // Check if response contains file blocks
+            const hasFileBlocks = response.includes('<file') ||
+                response.includes('<git-command') ||
+                response.includes('<command') ||
+                response.match(/```\w+:[^\n]+/) ||
+                response.match(/```(?:bash|shell|sh)\n/);
+
+            if (!hasFileBlocks) {
+                return; // No agentic content detected
+            }
+
+            const executor = getAgenticExecutor();
+            if (!executor) {
+                this.logService.warn('[SuperCode] Agentic executor not available');
+                return;
+            }
+
+            // Parse to check if there are actual actions
+            const parser = new AgenticResponseParser(this.logService);
+            const parseResult = parser.parseResponse(response);
+
+            if (parseResult.actions.length === 0) {
+                return; // No actions found
+            }
+
+            this.logService.info(`[SuperCode] Detected ${parseResult.actions.length} agentic actions, triggering execution`);
+
+            // Store for later execution (user can use Ctrl+Shift+E)
+            globalLastResponse = response;
+
+            // Auto-execute if workspace is available
+            const workspace = this.workspaceContextService.getWorkspace().folders[0];
+            if (workspace) {
+                this.logService.info(`[SuperCode] Auto-executing with workspace: ${workspace.uri.toString()}`);
+                executor.executeFromResponse(response, workspace.uri).then(result => {
+                    this.logService.info(`[SuperCode] Execution result: success=${result.success}, executed=${result.actionsExecuted}, failed=${result.actionsFailed}`);
+                }).catch(err => {
+                    this.logService.error(`[SuperCode] Execution failed: ${err}`);
+                });
+            } else {
+                this.logService.warn('[SuperCode] No workspace open, cannot auto-execute');
+            }
+
+        } catch (error) {
+            this.logService.error(`[SuperCode] Auto-execute check failed: ${error}`);
         }
     }
 
@@ -562,6 +630,13 @@ class OpenRouterLanguageModelProvider implements ILanguageModelChatProvider {
 // Global provider instance
 let globalProvider: OpenRouterLanguageModelProvider | undefined;
 
+// Global last response for agentic execution
+let globalLastResponse: string = '';
+
+export function getLastAIResponse(): string {
+    return globalLastResponse;
+}
+
 // ============================================================================
 // WORKBENCH CONTRIBUTION
 // ============================================================================
@@ -574,13 +649,14 @@ class OpenRouterContribution extends Disposable implements IWorkbenchContributio
         @ILogService private readonly logService: ILogService,
         @ISecretStorageService private readonly secretStorageService: ISecretStorageService,
         @IStorageService _storageService: IStorageService,
-        @INotificationService private readonly notificationService: INotificationService
+        @INotificationService private readonly notificationService: INotificationService,
+        @IWorkspaceContextService workspaceContextService: IWorkspaceContextService
     ) {
         super();
 
         this.logService.info('[SuperCode] Initializing AI language model provider');
 
-        const provider = new OpenRouterLanguageModelProvider(logService, secretStorageService, _storageService);
+        const provider = new OpenRouterLanguageModelProvider(logService, secretStorageService, _storageService, workspaceContextService);
         globalProvider = provider;
 
         try {
@@ -597,7 +673,7 @@ class OpenRouterContribution extends Disposable implements IWorkbenchContributio
             if (!key) {
                 this.notificationService.prompt(
                     Severity.Info,
-                    '🚀 SuperCode AI: Set your OpenRouter API key to enable AI-powered coding assistance.',
+                    '🚀 Clarke Kent: Set your OpenRouter API key to enable AI-powered coding assistance.',
                     [{
                         label: 'Set API Key (Ctrl+Shift+K)',
                         run: () => { /* Command will be triggered */ }
@@ -648,7 +724,7 @@ class SetOpenRouterApiKeyAction extends Action2 {
 
         if (apiKey) {
             await secretStorageService.set('supercode.openrouter.apiKey', apiKey);
-            notificationService.info('✓ API key saved! SuperCode AI is ready.');
+            notificationService.info('✓ API key saved! Clarke Kent is ready.');
             globalProvider?.notifyChange();
         }
     }
@@ -675,7 +751,7 @@ class SelectModelAction extends Action2 {
         const notificationService = accessor.get(INotificationService);
 
         if (!globalProvider) {
-            notificationService.warn('SuperCode AI not initialized');
+            notificationService.warn('Clarke Kent not initialized');
             return;
         }
 
